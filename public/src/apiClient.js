@@ -1,5 +1,5 @@
 define('apiClient', ['/socket.io/socket.io.js'], function (io) {
-  var socket = io.connect('http://localhost:3700');
+  var socket = io.connect(window.location.hostname);
   var roomId;
   return {
     openRoom: function (name) {

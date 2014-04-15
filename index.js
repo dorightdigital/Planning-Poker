@@ -1,6 +1,6 @@
 var express = require("express");
 var app = express();
-var port = 3700;
+var port = process.env.PORT || 3700;
 function guid() {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
