@@ -5,7 +5,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     concurrent: {
       dev: {
-        tasks: ['nodemon', 'watch', 'jasmine'],
+        tasks: ['watch:jstest', 'watch:css', 'nodemon'],
         options: {
           logConcurrentOutput: true
         }
@@ -30,23 +30,32 @@ module.exports = function (grunt) {
         }
       }
     },
+    jasmine_node: {
+      options: {
+        forceExit: true,
+        matchall: true,
+        extensions: 'js'
+      },
+      all: ['test/']
+    },
     watch: {
       css: {
         files: 'src/style.scss',
         tasks: ['sass']
       },
-      tests: {
-        files: 'test/**.js',
-        tasks: ['jasmine']
+      jstest: {
+        files: 'test/server/*.js',
+        tasks: ['jasmine_node']
       }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-nodemon');
-  grunt.registerTask('default', ['sass']);
-  grunt.registerTask('dev', ['sass', 'concurrent']);
+  grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.registerTask('test', ['jasmine_node']);
+  grunt.registerTask('host-dev', ['test', 'sass', 'nodemon']);
+  grunt.registerTask('dev', ['jasmine_node', 'sass', 'concurrent']);
 }
