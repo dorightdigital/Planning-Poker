@@ -41,7 +41,7 @@ app.get("/room/:id", function (req, res) {
     res.status(404).render("notFound", {ref: "Room " + id})
   }
 });
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/../public'));
 
 var io = require('socket.io').listen(app.listen(port));
 console.log("Listening on port " + port);
