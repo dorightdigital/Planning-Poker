@@ -1,6 +1,15 @@
 define('apiClient', ['/socket.io/socket.io.js'], function (io) {
-  var socket = io.connect(window.location.hostname);
-  var roomId;
+  var socket = io.connect(window.location.hostname, function () {
+
+  });
+  var roomRef;
+  function logEvent(name) {
+    socket.on(name, function (conf) {
+      console.log('Received', name, conf);
+    });
+  }
+  logEvent('participant-leave');
+  logEvent('room-close');
   return {
     openRoom: function (name) {
       socket.emit('open-room', {name: name}, function (ref) {
@@ -9,13 +18,13 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
     },
     onRoomReady: function (fn) {
       socket.on('room-ready', function (config) {
-        roomId = config.ref;
+        roomRef = config.ref;
         fn(config);
       });
     },
-    joinRoom: function (id, name) {
-      roomId = id;
-      socket.emit('join-room', {id: id, name: name});
+    joinRoom: function (ref, name) {
+      roomRef = ref;
+      socket.emit('join-room', {ref: ref, name: name});
       var output = {
         onApprove: function (fn) {
           socket.on('participant-approve', fn);
@@ -36,15 +45,15 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
     },
     acceptParticipant: function (ref) {
       socket.emit('participant-accept', {
-        ref: ref,
-        roomId: roomId
+        userRef: ref,
+        roomRef: roomRef
       });
     },
     rejectParticipant: function (ref) {
       socket.emit('participant-reject', {
-        ref: ref,
-        roomId: roomId
+        userRef: ref,
+        roomRef: roomRef
       });
-    },
+    }
   }
 });

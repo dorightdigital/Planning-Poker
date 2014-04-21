@@ -5,7 +5,9 @@
   "dependencies": {
     "socket.io": "latest",
     "express": "latest",
-    "jade": "latest"
+    "jade": "latest",
+    "guid": "0.0.12",
+    "underscore": "~1.6.0"
   },
   "author": "developer",
   "devDependencies": {
