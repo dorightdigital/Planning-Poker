@@ -2,3 +2,5 @@ node_modules
 .sass-cache/
 .grunt
 _SpecRunner.html
+run.pid
+nohup.log

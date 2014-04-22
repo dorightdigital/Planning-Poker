@@ -5,7 +5,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     concurrent: {
       dev: {
-        tasks: ['watch:jstest', 'watch:css', 'nodemon:dev'],
+        tasks: ['watch:jstest', 'watch:css', 'nodemon:local'],
         options: {
           logConcurrentOutput: true
         }
@@ -19,14 +19,23 @@ module.exports = function (grunt) {
       }
     },
     nodemon: {
+      local: {
+        script: 'server/index.js',
+        options: {
+          env: {
+            PORT: '7901'
+          },
+          ext: 'js',
+          watch: ['server']
+        }
+      },
       dev: {
         script: 'server/index.js',
         options: {
           env: {
             PORT: '8001'
           },
-          ext: 'js',
-          watch: ['server']
+          watch: ['none']
         }
       },
       live: {
@@ -34,7 +43,8 @@ module.exports = function (grunt) {
         options: {
           env: {
             PORT: '8101'
-          }
+          },
+          watch: ['none']
         }
       }
     },
@@ -59,7 +69,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.registerTask('test', ['jasmine_node']);
-  grunt.registerTask('host-dev', ['test', 'sass', 'nodemon:dev']);
+  grunt.registerTask('host-dev', ['sass', 'nodemon:dev']);
   grunt.registerTask('host-live', ['sass', 'nodemon:live']);
   grunt.registerTask('dev', ['jasmine_node', 'sass', 'concurrent']);
 }
