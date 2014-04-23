@@ -1,5 +1,5 @@
 var roomUrlPrefix = '/room/';
-exports.init = function (app) {
+exports.init = function (app, config) {
   var rooms = require('./roomManager');
 
   app.param('room', function (req, res, next, roomId) {
@@ -12,10 +12,10 @@ exports.init = function (app) {
     next();
   });
   app.get("/", function (req, res) {
-    res.render("page");
+    res.render("page", {config: config});
   });
   app.get(roomUrlPrefix + ":room", function (req, res) {
-    res.render('room', req.room.info);
+    res.render('room', {room: req.room.info, config: config});
   });
 };
 exports.forRoom = function (ref) {

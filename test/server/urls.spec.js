@@ -6,23 +6,30 @@ describe('URLs', function () {
   });
   describe('inner working of routes', function () {
     var routes;
+    var config;
+
     function expectRouteToRender(route, render, obj, req) {
       var renderFn = jasmine.createSpy('res.render');
       routes[route](req, {render: renderFn});
       if (obj) {
         expect(renderFn).toHaveBeenCalledWith(render, obj);
       } else {
-        expect(renderFn).toHaveBeenCalledWith(render);
+        expect(renderFn).toHaveBeenCalledWith(render, {config: config});
       }
     }
+
     beforeEach(function () {
       routes = {};
+      config = {
+        port: 1000
+      };
       url.init({
-        param: function () {},
+        param: function () {
+        },
         get: jasmine.createSpy('app.get').andCallFake(function (name, callback) {
           routes[name] = callback;
         })
-      });
+      }, config);
 
     });
     it('should setup home page', function () {
@@ -32,7 +39,7 @@ describe('URLs', function () {
       var room = {
         info: {}
       };
-      expectRouteToRender('/room/:room', 'room', room.info, {room: room});
+      expectRouteToRender('/room/:room', 'room', {room: room.info, config: config}, {room: room});
     });
   });
 });
