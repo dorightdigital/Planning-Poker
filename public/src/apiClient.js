@@ -1,5 +1,5 @@
 define('apiClient', ['/socket.io/socket.io.js'], function (io) {
-  var wsHost = 'ws://' + window.location.hostname + (window.config.port ? ':' + window.config.port : '');
+  var wsHost = 'ws://' + window.location.hostname + (window.config && window.config.port ? ':' + window.config.port : '');
   var socket = io.connect(wsHost, function () {
 
   });
