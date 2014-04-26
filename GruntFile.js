@@ -69,7 +69,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.registerTask('test', ['jasmine_node']);
-  grunt.registerTask('host-dev', ['sass', 'nodemon:dev']);
-  grunt.registerTask('host-live', ['sass', 'nodemon:live']);
+  grunt.registerTask('build', ['sass']);
+  grunt.registerTask('host-dev', ['nodemon:dev']);
+  grunt.registerTask('host-live', ['nodemon:live']);
   grunt.registerTask('dev', ['jasmine_node', 'sass', 'concurrent']);
 }
