@@ -64,7 +64,11 @@ describe('Server API', function () {
     it('should have join room feature', function () {
       spyOn(room.actions, 'participantRequest');
       fireEvent('join-room', {ref: room.info.ref, name: 'abc'});
-      expect(room.actions.participantRequest).toHaveBeenCalledWith(user, 'abc');
+      expect(room.actions.participantRequest).toHaveBeenCalledWith(user);
+    });
+    it('should set user\'s name', function () {
+      fireEvent('join-room', {ref: room.info.ref, name: 'def'});
+      expect(user.getName()).toBe('def');
     });
     it('should publish error if no room found while joining', function () {
       fireEvent('join-room', {ref: 'not-findable', name: 'abc'});
@@ -106,5 +110,20 @@ describe('Server API', function () {
         expect(user.sendError).toHaveBeenCalledWith('User not found "not-findable"');
       });
     });
-  })
+    it('should allow user to request voting', function () {
+      spyOn(room.actions, 'newVotingRound');
+      fireEvent('request-voting-round', {name: 'abc', roomRef: room.info.ref});
+      expect(room.actions.newVotingRound).toHaveBeenCalledWith('abc', user);
+    });
+    it('should allow user to request voting', function () {
+      spyOn(user, 'sendError');
+      fireEvent('request-voting-round', {name: 'abc', roomRef: 'a'});
+      expect(user.sendError).toHaveBeenCalledWith('Room not found "a"');
+    });
+    it('should allow user to request voting', function () {
+      spyOn(user, 'disconnect');
+      fireEvent('disconnect');
+      expect(user.disconnect).toHaveBeenCalledWith();
+    });
+  });
 });

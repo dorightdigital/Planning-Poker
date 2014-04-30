@@ -53,8 +53,9 @@ exports.init = function (server) {
 //    });
     socket.on('join-room', function (config) {
       var room = rooms.get(config.ref);
+      user.setName(config.name);
       if (room) {
-        room.actions.participantRequest(user, config.name);
+        room.actions.participantRequest(user);
       } else {
         socket.emit('error', 'Room not found "' + config.ref + '"');
       }
@@ -68,6 +69,17 @@ exports.init = function (server) {
     });
     socket.on('participant-reject', function (config) {
       callWithRoomAndUser(config, 'participantReject');
+    });
+    socket.on('disconnect', function (config) {
+      user.disconnect();
+    });
+    socket.on('request-voting-round', function (config) {
+      var room = rooms.get(config.roomRef);
+      if (!room) {
+        user.sendError('Room not found "' + config.roomRef + '"');
+        return;
+      }
+      room.actions.newVotingRound(config.name, user);
     });
   });
 };

@@ -55,6 +55,31 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
         userRef: ref,
         roomRef: roomRef
       });
+    },
+    requestVotes: function (name) {
+      socket.emit('request-voting-round', {
+        name: name,
+        roomRef: roomRef
+      });
+    },
+    onVotingRequest: function (fn) {
+      socket.on('vote-required', function (config) {
+        fn(config.taskName, config.taskRef, config.roomRef);
+      });
+    },
+    vote: function (vote, taskRef, roomRef) {
+      socket.emit('vote', {
+        roomRef: roomRef,
+        taskRef: taskRef,
+        vote: vote
+      })
+    },
+    onParticipantUpdate: function (fn) {
+      socket.on('participant-update', function (data) {
+        if (data.roomRef === roomRef) {
+          fn(data.participants);
+        }
+      });
     }
   }
 });

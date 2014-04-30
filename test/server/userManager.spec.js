@@ -57,4 +57,18 @@ describe('User Manager', function () {
       roomRef: 'some-room'
     });
   });
+  it('should inform user when vote is required', function () {
+    guest.voteRequired('some-room', 'some-task', 'task-name');
+    expect(guestSocket.emit).toHaveBeenCalledWith('vote-required', {
+      roomRef: 'some-room',
+      taskRef: 'some-task',
+      taskName: 'task-name'
+    });
+  });
+  it('should leave rooms on disconnect', function () {
+    guest.accessGranted(room.info.ref);
+    spyOn(room.actions, 'removeUser');
+    guest.disconnect();
+    expect(room.actions.removeUser).toHaveBeenCalledWith(guest);
+  });
 });

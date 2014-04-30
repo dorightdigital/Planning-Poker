@@ -4,7 +4,8 @@ html
         title= "Planning Poker"
         script.
           window.config = {port: #{config.port}}
-        script(src='//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js', data-main='//dorightdigital.com/resources/code/DomWidgets.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js', data-main='/src/domWidgets.js')
         link(rel='stylesheet',href='/src/style.css')
     body(data-dom-widget='pageTurner')
         div(data-dom-widget='showRoom',data-url=room.url,data-name=room.name,data-ref=room.ref)
+        ul(data-dom-widget='listParticipants')
