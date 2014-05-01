@@ -27,7 +27,10 @@ define(['jquery', 'apiClient'], function ($, api) {
           $elem.find('h1').text('Nope, you\'re not allowed.');
         });
         $elem.html('<h1>Joining... waiting for permission</h1>')
-      }))
+      }));
+      api.onRoomClose(function () {
+        $elem.html('<h1>This room has been closed.</h1>');
+      })
     }
   }
 });

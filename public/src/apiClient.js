@@ -44,6 +44,9 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
     onError: function (fn) {
       socket.on('error', fn);
     },
+    onRoomClose: function (fn) {
+      socket.on('room-closed', fn);
+    },
     acceptParticipant: function (ref) {
       socket.emit('participant-accept', {
         userRef: ref,

@@ -61,8 +61,7 @@ exports.init = function (server) {
       }
     });
     socket.on('open-room', function (config) {
-      var room = rooms.create(user, config.name);
-      socket.emit('room-ready', room.info);
+      rooms.create(user, config.name);
     });
     socket.on('participant-accept', function (config) {
       callWithRoomAndUser(config, 'participantAccept');
@@ -70,7 +69,7 @@ exports.init = function (server) {
     socket.on('participant-reject', function (config) {
       callWithRoomAndUser(config, 'participantReject');
     });
-    socket.on('disconnect', function (config) {
+    socket.on('disconnect', function () {
       user.disconnect();
     });
     socket.on('request-voting-round', function (config) {

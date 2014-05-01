@@ -11,7 +11,6 @@ exports.exists = function (id) {
 };
 exports.create = function (host, name) {
   var ref = guid.raw();
-  var room;
   var participants = [];
 
   function pushParticipantListToAllUsers() {
@@ -27,7 +26,7 @@ exports.create = function (host, name) {
     });
   }
 
-  return rooms[ref] = room = {
+  var room = rooms[ref] = {
     info: {
       name: name,
       ref: ref,
@@ -67,9 +66,19 @@ exports.create = function (host, name) {
         });
       },
       removeUser: function (user) {
-        participants = _.without(participants, user);
-        pushParticipantListToAllUsers();
+        if (user === host) {
+          _.each(participants, function (part) {
+            part.roomClosed(room);
+          });
+        } else {
+          participants = _.without(participants, user);
+          pushParticipantListToAllUsers();
+        }
       }
     }
   };
+
+  host.roomReady(room);
+
+  return room;
 };

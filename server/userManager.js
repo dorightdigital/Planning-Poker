@@ -21,8 +21,12 @@ function createUser(socket) {
     participantRequest: function (user, room, name) {
       socket.emit('participant-request', { name : name, ref : user.getRef() })
     },
+    roomReady: function (room) {
+      rooms.push(room.info.ref);
+      socket.emit('room-ready', room.info);
+    },
     accessGranted: function (roomRef) {
-      rooms.push(roomRef)
+      rooms.push(roomRef);
       socket.emit('participant-approve', {
         roomRef: roomRef
       });
@@ -40,6 +44,9 @@ function createUser(socket) {
         roomRef: roomRef,
         participants: list
       });
+    },
+    roomClosed: function (room) {
+      socket.emit('room-closed', {roomRef: 'ref'});
     },
     voteRequired: function (roomRef, taskRef, taskName) {
       socket.emit('vote-required', {

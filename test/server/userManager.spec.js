@@ -27,6 +27,10 @@ describe('User Manager', function () {
     spyOn(require('guid'), 'raw').andReturn('myGuid');
     expect(require('./helpers').generateUser().getRef()).toBe('myGuid');
   });
+  it('should inform user when room is ready', function () {
+    host.roomReady(room);
+    expect(hostSocket.emit).toHaveBeenCalledWith('room-ready', room.info);
+  });
   it('should inform user of participantRequest', function () {
     host.participantRequest(guest, room, 'guest');
     expect(hostSocket.emit).toHaveBeenCalledWith('participant-request', {
@@ -65,10 +69,19 @@ describe('User Manager', function () {
       taskName: 'task-name'
     });
   });
-  it('should leave rooms on disconnect', function () {
+  it('should leave rooms participated in on disconnect', function () {
     guest.accessGranted(room.info.ref);
     spyOn(room.actions, 'removeUser');
     guest.disconnect();
     expect(room.actions.removeUser).toHaveBeenCalledWith(guest);
+  });
+  it('should leave hosted rooms on disconnect', function () {
+    spyOn(room.actions, 'removeUser');
+    host.disconnect();
+    expect(room.actions.removeUser).toHaveBeenCalledWith(host);
+  });
+  it('should inform user of room closure', function () {
+    guest.roomClosed('ref');
+    expect(guestSocket.emit).toHaveBeenCalledWith('room-closed', {roomRef: 'ref'});
   });
 });

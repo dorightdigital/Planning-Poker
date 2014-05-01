@@ -8,34 +8,39 @@ describe('Room Manager', function () {
   var assume = expect;
   describe('newly created rooms', function () {
     beforeEach(function () {
-      this.room = roomManager.create(this.hostUserObj = {}, this.name = 'Abc');
+      this.host = help.generateUser();
+      spyOn(this.host, 'roomReady');
+      this.room = roomManager.create(this.host, this.name = 'Abc');
     });
     it('should store name', function () {
       expect(this.room.info.name).toBe(this.name);
     });
     it('should assign unique reference', function () {
-      expect(this.room.info.ref).not.toEqual(roomManager.create({}, 'Def').info.ref);
+      expect(this.room.info.ref).not.toEqual(roomManager.create(help.generateUser(), 'Def').info.ref);
     });
     it('should be gettable', function () {
       expect(roomManager.get(this.room.info.ref)).toBe(this.room);
+    });
+    it('should inform host of creation', function () {
+      expect(this.host.roomReady).toHaveBeenCalledWith(this.room);
     });
   });
   it('should use guid for reference', function () {
     var fakeGuid = 'my-guid';
     spyOn(require('guid'), 'raw').andReturn(fakeGuid);
-    expect(roomManager.create({}, 'Def').info.ref).toEqual(fakeGuid);
+    expect(roomManager.create(help.generateUser(), 'Def').info.ref).toEqual(fakeGuid);
   });
   it('should lookup room URL', function () {
     spyOn(require('../../server/urls'), 'forRoom').andReturn('something');
-    var id = roomManager.create({}, 'Def').info.ref;
+    var id = roomManager.create(help.generateUser(), 'Def').info.ref;
     expect(require('../../server/urls').forRoom).toHaveBeenCalledWith(id);
-    expect(roomManager.create({}, 'Def').info.url).toBe('something');
+    expect(roomManager.create(help.generateUser(), 'Def').info.url).toBe('something');
   });
   it('should show existence status', function () {
     var fakeGuid = 'my-guid2';
     spyOn(require('guid'), 'raw').andReturn(fakeGuid);
     assume(roomManager.exists(fakeGuid)).toBeFalsy();
-    roomManager.create({}, 'Ghi');
+    roomManager.create(help.generateUser(), 'Ghi');
     expect(roomManager.exists(fakeGuid)).toBeTruthy();
   });
   describe('Actions', function () {
@@ -106,6 +111,15 @@ describe('Room Manager', function () {
       room.actions.removeUser(guest);
       expect(host.pushParticipantList).toHaveBeenCalled();
       expect(host.pushParticipantList.mostRecentCall.args[1]).toEqual({});
+    });
+    it('should close room when host leaves', function () {
+      room.actions.participantRequest(guest);
+      room.actions.participantAccept(guest, host);
+      spyOn(guest, 'pushParticipantList');
+      spyOn(guest, 'roomClosed');
+      room.actions.removeUser(host);
+      expect(guest.pushParticipantList).not.toHaveBeenCalled();
+      expect(guest.roomClosed).toHaveBeenCalled();
     });
     it('should ignore rejection when not from host', function () {
       var randomUser = help.generateUser();

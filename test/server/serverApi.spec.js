@@ -55,11 +55,10 @@ describe('Server API', function () {
     }
 
     it('should create room upon request', function () {
-      var roomInfo = {};
-      spyOn(rm, 'create').andReturn({info: roomInfo});
+      var room = {info: {}};
+      spyOn(rm, 'create').andReturn(room);
       fireEvent('open-room', {name: 'abc'});
       expect(rm.create).toHaveBeenCalledWith(um.getFromSocket(socket), 'abc');
-      expect(socket.emit).toHaveBeenCalledWith('room-ready', roomInfo);
     });
     it('should have join room feature', function () {
       spyOn(room.actions, 'participantRequest');

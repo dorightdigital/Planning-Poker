@@ -11,7 +11,7 @@ define(['jquery', 'apiClient'], function ($, api) {
         }).append('<input/>')));
         $elem.append($('<ul data-dom-widget="incomingParticipantRequests"/>'));
         $elem.append($('<div><h3>Others can join by visiting ' + fullRoomUrl + '</h3><span data-dom-widget="showQrCode" data-url="' + fullRoomUrl + '"/> </div>'));
-        $elem.append($('<ul data-dom-widget="listParticipants"/>'));
+        $elem.append($('<div data-dom-widget="listParticipants"/>'));
         $elem.loadDomWidgets();
       });
     }
