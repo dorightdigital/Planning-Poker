@@ -113,13 +113,21 @@ describe('Room Manager', function () {
       expect(host.pushParticipantList.mostRecentCall.args[1]).toEqual({});
     });
     it('should close room when host leaves', function () {
+      var pendingGuest = help.generateUser();
+      room.actions.participantRequest(pendingGuest);
       room.actions.participantRequest(guest);
       room.actions.participantAccept(guest, host);
       spyOn(guest, 'pushParticipantList');
       spyOn(guest, 'roomClosed');
+      spyOn(pendingGuest, 'roomClosed');
       room.actions.removeUser(host);
       expect(guest.pushParticipantList).not.toHaveBeenCalled();
       expect(guest.roomClosed).toHaveBeenCalled();
+      expect(pendingGuest.roomClosed).toHaveBeenCalled();
+    });
+    it('should properly remove room when host leaves', function () {
+      room.actions.removeUser(host);
+      expect(roomManager.exists(room.info.ref)).toBeFalsy();
     });
     it('should ignore rejection when not from host', function () {
       var randomUser = help.generateUser();

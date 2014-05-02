@@ -12,6 +12,7 @@ exports.exists = function (id) {
 exports.create = function (host, name) {
   var ref = guid.raw();
   var participants = [];
+  var potentialParticipants = [];
 
   function pushParticipantListToAllUsers() {
     var part = [];
@@ -38,6 +39,7 @@ exports.create = function (host, name) {
 //    },
     actions: {
       participantRequest: function (user) {
+        potentialParticipants.push(user);
         host.participantRequest(user, room, user.getName());
       },
       participantAccept: function (user, acceptor) {
@@ -67,9 +69,10 @@ exports.create = function (host, name) {
       },
       removeUser: function (user) {
         if (user === host) {
-          _.each(participants, function (part) {
+          _.each(potentialParticipants, function (part) {
             part.roomClosed(room);
           });
+          delete rooms[room.info.ref];
         } else {
           participants = _.without(participants, user);
           pushParticipantListToAllUsers();
