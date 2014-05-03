@@ -140,20 +140,29 @@ describe('Room Manager', function () {
     });
     describe('voting', function () {
       var guest2;
+      function requestAndAcceptGuest(guest, name) {
+        room.actions.participantRequest(guest, 'abc');
+        room.actions.participantAccept(guest, host);
+      }
       beforeEach(function () {
         guest2 = help.generateUser();
-        room.actions.participantRequest(guest, 'abc');
-        room.actions.participantRequest(guest2, 'abc');
-        room.actions.participantAccept(guest, host);
-        room.actions.participantAccept(guest2, host);
+        requestAndAcceptGuest(guest, 'abc');
+        requestAndAcceptGuest(guest2, 'def');
+        spyOn(guid, 'raw').andReturn('known-guid');
       });
       it('should inform guests when host stats voting round', function () {
         spyOn(guest, 'voteRequired');
         spyOn(guest2, 'voteRequired');
-        spyOn(guid, 'raw').andReturn('known-guid');
         room.actions.newVotingRound('abc', host);
         expect(guest.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc');
         expect(guest2.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc');
+      });
+      it('should inform late-entry guests mid-voting round', function () {
+        var guest = help.generateUser();
+        spyOn(guest, 'voteRequired');
+        room.actions.newVotingRound('abc', host);
+        requestAndAcceptGuest(guest, 'ghi');
+        expect(guest.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc');
       });
       it('should reject non-host stating voting round', function () {
         spyOn(guest2, 'voteRequired');
@@ -163,5 +172,5 @@ describe('Room Manager', function () {
         expect(guest.sendError).toHaveBeenCalledWith('You can\'t start voting rounds unless you\'re the host.');
       });
     });
-  });
+  });;
 });

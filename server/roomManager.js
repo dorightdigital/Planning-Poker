@@ -13,6 +13,7 @@ exports.create = function (host, name) {
   var ref = guid.raw();
   var participants = [];
   var potentialParticipants = [];
+  var votingRound;
 
   function pushParticipantListToAllUsers() {
     var part = [];
@@ -28,6 +29,7 @@ exports.create = function (host, name) {
   }
 
   var room = rooms[ref] = {
+    status: 'open',
     info: {
       name: name,
       ref: ref,
@@ -47,6 +49,9 @@ exports.create = function (host, name) {
           user.accessGranted(ref);
           participants.push(user);
           pushParticipantListToAllUsers();
+          if (votingRound) {
+            user.voteRequired.apply(null, votingRound);
+          }
         } else {
           acceptor.sendError('You can\'t approve users unless you\'re the host.')
         }
@@ -63,8 +68,9 @@ exports.create = function (host, name) {
           user.sendError('You can\'t start voting rounds unless you\'re the host.');
           return;
         }
+        votingRound = [ref, guid.raw(), name];
         _.each(participants, function (participant) {
-          participant.voteRequired(ref, guid.raw(), name);
+          participant.voteRequired.apply(null, votingRound);
         });
       },
       removeUser: function (user) {
