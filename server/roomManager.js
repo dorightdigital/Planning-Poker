@@ -16,7 +16,8 @@ exports.create = function (host, name) {
   var votingRound;
   var votingStatus = {
     pending: [],
-    voted: []
+    voted: [],
+    answers: {}
   }
 
   function pushParticipantListToAllUsers() {
@@ -34,11 +35,30 @@ exports.create = function (host, name) {
 
   function sendVotingStatusUpdate() {
     var voteRef = votingRound[1];
-    host.fullVotingStatus(voteRef, votingStatus.pending, votingStatus.voted);
-    _.each(participants, function (participant) {
-      participant.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
-    });
-    host.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
+    if (votingStatus.pending.length === 0) {
+      var numOfDifferentAnswers = 0;
+      var lastAnswer = 0;
+      var params = 0;
+      _.each(votingStatus.answers, function (people, key) {
+        numOfDifferentAnswers++;
+        lastAnswer = key;
+      });
+      if (numOfDifferentAnswers > 1) {
+        params = [voteRef, 'varied', votingStatus.answers];
+      } else {
+        params = [voteRef, 'agreed', parseInt(lastAnswer, 10)];
+      }
+      host.result.apply(host, params);
+      _.each(participants, function (user) {
+        user.result.apply(user, params);
+      });
+    } else {
+      host.fullVotingStatus(voteRef, votingStatus.pending, votingStatus.voted);
+      _.each(participants, function (participant) {
+        participant.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
+      });
+      host.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
+    }
   }
 
   var room = rooms[ref] = {
@@ -47,10 +67,6 @@ exports.create = function (host, name) {
       ref: ref,
       url: url.forRoom(ref)
     },
-//      approved: [],
-//      pending: [],
-//      all: [],
-//    },
     actions: {
       participantRequest: function (user) {
         potentialParticipants.push(user);
@@ -89,8 +105,12 @@ exports.create = function (host, name) {
         });
         sendVotingStatusUpdate();
       },
-      voteReceived: function (user) {
+      voteReceived: function (user, vote) {
         var userName = user.getName();
+        var voteAsString = ('' + vote);
+        votingStatus.answers[voteAsString] = votingStatus.answers[voteAsString] || []
+        votingStatus.answers[voteAsString].push(userName);
+        console.log(votingStatus);
         votingStatus.voted.push(userName);
         votingStatus.pending = _.without(votingStatus.pending, userName);
         sendVotingStatusUpdate();

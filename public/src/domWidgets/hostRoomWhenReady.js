@@ -1,4 +1,4 @@
-define(['jquery', 'apiClient'], function ($, api) {
+define(['jquery', 'apiClient', 'shared/resultRenderer'], function ($, api, rr) {
   return {
     init: function ($elem) {
       api.onRoomReady(function (room) {
@@ -23,6 +23,7 @@ define(['jquery', 'apiClient'], function ($, api) {
         $elem.append($('<div data-dom-widget="listParticipants"/>'));
         $elem.loadDomWidgets();
       });
+      rr($('body'));
     }
   }
 });

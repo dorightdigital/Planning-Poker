@@ -11,6 +11,7 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
   }
   logEvent('participant-leave');
   logEvent('room-close');
+  logEvent('vote-result');
   return {
     openRoom: function (name) {
       socket.emit('open-room', {name: name}, function (ref) {
@@ -74,7 +75,7 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
       socket.emit('vote', {
         roomRef: roomRef,
         taskRef: taskRef,
-        vote: vote
+        value: vote
       })
     },
     onParticipantUpdate: function (fn) {
@@ -92,6 +93,25 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
     onVotingProgressUpdate: function (fn) {
       socket.on('voting-progress', function (data) {
         fn(data.progressPercentage);
+      });
+    },
+    onUnanimousResult: function (fn) {
+      socket.on('vote-result', function (data) {
+        if (data.resultType === 'agreed') {
+          fn(data.resultDetail);
+        }
+      });
+    },
+    onMixedResult: function (fn) {
+      socket.on('vote-result', function (data) {
+        if (data.resultType !== 'agreed') {
+          fn(data.resultDetail);
+        }
+      });
+    },
+    onResult: function (fn) {
+      socket.on('vote-result', function (data) {
+        fn(data);
       });
     }
   }

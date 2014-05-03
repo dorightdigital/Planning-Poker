@@ -68,6 +68,13 @@ function createUser(socket) {
         progressPercentage: progress * 100
       });
     },
+    result: function (voteRef, type, detail) {
+      socket.emit('vote-result', {
+        voteRef: voteRef,
+        resultType: type,
+        resultDetail: detail
+      });
+    },
     disconnect: function () {
       require('underscore').each(rooms, function (value) {
         var room = require('./roomManager').get(value);

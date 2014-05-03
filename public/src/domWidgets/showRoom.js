@@ -1,4 +1,4 @@
-define(['jquery', 'apiClient', 'shared/voteProgress'], function ($, api, vp) {
+define(['jquery', 'apiClient', 'shared/voteProgress', 'shared/resultRenderer'], function ($, api, vp, rr) {
   var nums = [1,2,3,5,8,13,21];
   return {
     init: function ($elem) {
@@ -32,7 +32,8 @@ define(['jquery', 'apiClient', 'shared/voteProgress'], function ($, api, vp) {
       }));
       api.onRoomClose(function () {
         $elem.html('<h1>This room has been closed.</h1>');
-      })
+      });
+      rr($('body'));
     }
   }
 });

@@ -101,4 +101,13 @@ describe('User Manager', function () {
     expect(obj.progressPercentage).toBe(3/5*100);
     expect(obj.voteRef).toBe('vote-ref');
   });
+  it('should inform user (guest) of voting progress', function () {
+    var objOrValue = {};
+    guest.result('vote-ref', 'keyword', objOrValue);
+    expect(guestSocket.emit).toHaveBeenCalledWith('vote-result', jasmine.any(Object));
+    var obj = guestSocket.emit.mostRecentCall.args[1];
+    expect(obj.voteRef).toBe('vote-ref');
+    expect(obj.resultType).toBe('keyword');
+    expect(obj.resultDetail).toBe(objOrValue);
+  });
 });
