@@ -1,4 +1,4 @@
-define(['jquery', 'apiClient'], function ($, api) {
+define(['jquery', 'apiClient', 'shared/voteProgress'], function ($, api, vp) {
   var nums = [1,2,3,5,8,13,21];
   return {
     init: function ($elem) {
@@ -19,9 +19,11 @@ define(['jquery', 'apiClient'], function ($, api) {
             $.each(nums, function (key, num) {
               $div.append($('<button/>').text(num).click(function () {
                 api.vote(num, ref, roomRef);
+                $div.remove();
               }));
             });
             $elem.append($div);
+            $elem.append(vp());
           });
         }).onReject(function () {
           $elem.find('h1').text('Nope, you\'re not allowed.');

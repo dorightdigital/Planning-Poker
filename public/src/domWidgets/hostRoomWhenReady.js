@@ -10,7 +10,7 @@ define(['jquery', 'apiClient'], function ($, api) {
             e.preventDefault();
             api.requestVotes($(this).find('input').val());
             return false;
-          }).append('<input/>')));
+          }).append('<input/>')).append($('<div data-dom-widget="fullVoteStatus"/>')));
         $elem.append($('<ul data-dom-widget="incomingParticipantRequests"/>'));
         $elem.append(
           $('<div/>')

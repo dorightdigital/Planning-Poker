@@ -62,14 +62,19 @@ function createUser(socket) {
         voteRef: voteRef
       });
     },
-    votingProgress: function () {},
+    votingProgress: function (voteRef, progress) {
+      socket.emit('voting-progress', {
+        voteRef: voteRef,
+        progressPercentage: progress * 100
+      });
+    },
     disconnect: function () {
       require('underscore').each(rooms, function (value) {
         var room = require('./roomManager').get(value);
         if (room) {
           room.actions.removeUser(user);
         } else {
-          throw 'no room found';
+          console.warn('no room found while disconnecting');
         }
       });
     }

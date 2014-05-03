@@ -1,4 +1,4 @@
-define(['apiClient'], function (api) {
+define(['apiClient', 'shared/voteProgress'], function (api, vp) {
   return {
     init: function ($elem) {
       api.onFullVotingStatus(function (pending, voted) {
@@ -10,7 +10,8 @@ define(['apiClient'], function (api) {
         $.each(voted, function () {
           $votedList.append($('<li/>').text(this));
         });
-        $elem.html($('<div><h1>Pending</h1></div>').append($pendingList));
+        $elem.html(vp());
+        $elem.append($('<div><h1>Pending</h1></div>').append($pendingList));
         $elem.append($('<div><h1>Voted</h1></div>').append($votedList));
       });
       api.onRoomClose(function () {

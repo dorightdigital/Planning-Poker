@@ -140,11 +140,13 @@ describe('Room Manager', function () {
     });
     describe('voting', function () {
       var guest2;
+
       function requestAndAcceptGuest(guest, name) {
         guest.setName(name);
         room.actions.participantRequest(guest, 'abc');
         room.actions.participantAccept(guest, host);
       }
+
       beforeEach(function () {
         guest2 = help.generateUser();
         requestAndAcceptGuest(guest, 'abc');
@@ -178,6 +180,9 @@ describe('Room Manager', function () {
           pendingNames = undefined;
           votedNames = undefined;
           voteRef = undefined;
+          spyOn(guest, 'votingProgress');
+          spyOn(guest2, 'votingProgress');
+          spyOn(host, 'votingProgress');
           spyOn(host, 'fullVotingStatus').andCallFake(function (ref, waiting, voted) {
             pendingNames = waiting;
             votedNames = voted;
@@ -185,21 +190,48 @@ describe('Room Manager', function () {
           });
           guid.raw.andReturn('new-guid');
           room.actions.newVotingRound('abc', host);
-          expect(host.fullVotingStatus).toHaveBeenCalled();
-          host.fullVotingStatus.reset();
         });
         it('should send the correct vote reference', function () {
           expect(voteRef).toBe('new-guid');
         });
         it('should publish initial voting status to host', function () {
+          expect(host.fullVotingStatus).toHaveBeenCalled();
           expect(pendingNames[0]).toBe('abc');
           expect(pendingNames[1]).toBe('def');
         });
+        it('should publish initial voting status to guests and host', function () {
+          expect(guest.votingProgress).toHaveBeenCalledWith('new-guid', 0);
+          expect(guest2.votingProgress).toHaveBeenCalledWith('new-guid', 0);
+          expect(host.votingProgress).toHaveBeenCalledWith('new-guid', 0);
+        });
         it('should update voting status when guest votes', function () {
+          host.fullVotingStatus.reset();
           room.actions.voteReceived(guest, 'known-guid', 13);
           expect(host.fullVotingStatus).toHaveBeenCalled();
           expect(votedNames).toContain('abc');
           expect(pendingNames).toContain('def');
+        });
+        it('should update voting status when new guest joins mid-vote', function () {
+          host.fullVotingStatus.reset();
+          requestAndAcceptGuest(help.generateUser(), 'ghi');
+          expect(host.fullVotingStatus).toHaveBeenCalled();
+          expect(pendingNames).toContain('ghi');
+        });
+        it('should update voting status anonymously for guests and host', function () {
+          room.actions.voteReceived(guest, 'known-guid', 13);
+          expect(guest.votingProgress).toHaveBeenCalledWith('new-guid', .5);
+          expect(guest2.votingProgress).toHaveBeenCalledWith('new-guid', .5);
+          expect(host.votingProgress).toHaveBeenCalledWith('new-guid', .5);
+        });
+        it('should update voting status when new guest joins', function () {
+          room.actions.voteReceived(guest, 'known-guid', 13);
+          var guest3 = help.generateUser();
+          spyOn(guest3, 'votingProgress');
+          requestAndAcceptGuest(guest3, 'ghi');
+          expect(guest.votingProgress).toHaveBeenCalledWith('new-guid', 1 / 3);
+          expect(guest2.votingProgress).toHaveBeenCalledWith('new-guid', 1 / 3);
+          expect(guest3.votingProgress).toHaveBeenCalledWith('new-guid', 1 / 3);
+          expect(host.votingProgress).toHaveBeenCalledWith('new-guid', 1 / 3);
         });
       });
     });

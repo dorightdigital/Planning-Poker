@@ -88,6 +88,11 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
       socket.on('full-voting-status', function (data) {
         fn(data.pending, data.voted);
       });
+    },
+    onVotingProgressUpdate: function (fn) {
+      socket.on('voting-progress', function (data) {
+        fn(data.progressPercentage);
+      });
     }
   }
 });

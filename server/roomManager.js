@@ -21,9 +21,9 @@ exports.create = function (host, name) {
 
   function pushParticipantListToAllUsers() {
     var part = [];
-    _.each(participants, function (partic) {
+    _.each(participants, function (participant) {
       part.push({
-        name: partic.getName()
+        name: participant.getName()
       })
     });
     host.pushParticipantList(ref, part);
@@ -33,7 +33,12 @@ exports.create = function (host, name) {
   }
 
   function sendVotingStatusUpdate() {
-    host.fullVotingStatus(votingRound[1], votingStatus.pending, votingStatus.voted);
+    var voteRef = votingRound[1];
+    host.fullVotingStatus(voteRef, votingStatus.pending, votingStatus.voted);
+    _.each(participants, function (participant) {
+      participant.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
+    });
+    host.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
   }
 
   var room = rooms[ref] = {
@@ -58,6 +63,8 @@ exports.create = function (host, name) {
           pushParticipantListToAllUsers();
           if (votingRound) {
             user.voteRequired.apply(null, votingRound);
+            votingStatus.pending.push(user.getName());
+            sendVotingStatusUpdate();
           }
         } else {
           acceptor.sendError('You can\'t approve users unless you\'re the host.')
