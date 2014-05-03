@@ -14,6 +14,10 @@ exports.create = function (host, name) {
   var participants = [];
   var potentialParticipants = [];
   var votingRound;
+  var votingStatus = {
+    pending: [],
+    voted: []
+  }
 
   function pushParticipantListToAllUsers() {
     var part = [];
@@ -28,8 +32,11 @@ exports.create = function (host, name) {
     });
   }
 
+  function sendVotingStatusUpdate() {
+    host.fullVotingStatus(votingRound[1], votingStatus.pending, votingStatus.voted);
+  }
+
   var room = rooms[ref] = {
-    status: 'open',
     info: {
       name: name,
       ref: ref,
@@ -71,7 +78,15 @@ exports.create = function (host, name) {
         votingRound = [ref, guid.raw(), name];
         _.each(participants, function (participant) {
           participant.voteRequired.apply(null, votingRound);
+          votingStatus.pending.push(participant.getName());
         });
+        sendVotingStatusUpdate();
+      },
+      voteReceived: function (user) {
+        var userName = user.getName();
+        votingStatus.voted.push(userName);
+        votingStatus.pending = _.without(votingStatus.pending, userName);
+        sendVotingStatusUpdate();
       },
       removeUser: function (user) {
         if (user === host) {

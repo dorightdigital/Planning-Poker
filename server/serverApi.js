@@ -5,6 +5,7 @@ exports.init = function (server) {
 
   io.sockets.on('connection', function (socket) {
     var user = require('./userManager').getFromSocket(socket);
+
     function callWithRoomAndUser(config, fn) {
       var room = rooms.get(config.roomRef);
       if (!room) {
@@ -18,6 +19,7 @@ exports.init = function (server) {
       }
       room.actions[fn](guest, user);
     }
+
 //    var roomsUsedByCurrentSocket = {host: [], participant: []};
 //    socket.on('disconnect', function () {
 //      var participant = roomsUsedByCurrentSocket.participant;
@@ -79,6 +81,10 @@ exports.init = function (server) {
         return;
       }
       room.actions.newVotingRound(config.name, user);
+    });
+    socket.on('vote', function (config) {
+      var room = rooms.get(config.roomRef);
+      room.actions.voteReceived(user, config.value, config.taskRef);
     });
   });
 };

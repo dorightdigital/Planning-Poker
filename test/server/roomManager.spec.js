@@ -141,6 +141,7 @@ describe('Room Manager', function () {
     describe('voting', function () {
       var guest2;
       function requestAndAcceptGuest(guest, name) {
+        guest.setName(name);
         room.actions.participantRequest(guest, 'abc');
         room.actions.participantAccept(guest, host);
       }
@@ -171,6 +172,36 @@ describe('Room Manager', function () {
         expect(guest2.voteRequired).not.toHaveBeenCalled();
         expect(guest.sendError).toHaveBeenCalledWith('You can\'t start voting rounds unless you\'re the host.');
       });
+      describe('receiving votes', function () {
+        var pendingNames, votedNames, voteRef;
+        beforeEach(function () {
+          pendingNames = undefined;
+          votedNames = undefined;
+          voteRef = undefined;
+          spyOn(host, 'fullVotingStatus').andCallFake(function (ref, waiting, voted) {
+            pendingNames = waiting;
+            votedNames = voted;
+            voteRef = ref;
+          });
+          guid.raw.andReturn('new-guid');
+          room.actions.newVotingRound('abc', host);
+          expect(host.fullVotingStatus).toHaveBeenCalled();
+          host.fullVotingStatus.reset();
+        });
+        it('should send the correct vote reference', function () {
+          expect(voteRef).toBe('new-guid');
+        });
+        it('should publish initial voting status to host', function () {
+          expect(pendingNames[0]).toBe('abc');
+          expect(pendingNames[1]).toBe('def');
+        });
+        it('should update voting status when guest votes', function () {
+          room.actions.voteReceived(guest, 'known-guid', 13);
+          expect(host.fullVotingStatus).toHaveBeenCalled();
+          expect(votedNames).toContain('abc');
+          expect(pendingNames).toContain('def');
+        });
+      });
     });
-  });;
+  });
 });

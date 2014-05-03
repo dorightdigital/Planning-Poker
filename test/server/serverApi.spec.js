@@ -80,12 +80,12 @@ describe('Server API', function () {
         fireEvent('participant-accept', {roomRef: room.info.ref, userRef: guest.getRef()});
         expect(room.actions.participantAccept).toHaveBeenCalledWith(guest, user);
       });
-      it('should publish error if no room found while joining', function () {
+      it('should publish error if no room found while accepting', function () {
         spyOn(user, 'sendError');
         fireEvent('participant-accept', {roomRef: 'not-findable', userRef: user.getRef()});
         expect(user.sendError).toHaveBeenCalledWith('Room not found "not-findable"');
       });
-      it('should publish error if no room found while joining', function () {
+      it('should publish error if no user found while accepting', function () {
         spyOn(user, 'sendError');
         fireEvent('participant-accept', {roomRef: room.info.ref, userRef: 'not-findable'});
         expect(user.sendError).toHaveBeenCalledWith('User not found "not-findable"');
@@ -98,12 +98,12 @@ describe('Server API', function () {
         fireEvent('participant-reject', {roomRef: room.info.ref, userRef: guest.getRef()});
         expect(room.actions.participantReject).toHaveBeenCalledWith(guest, user);
       });
-      it('should publish error if no room found while joining', function () {
+      it('should publish error if no room found while rejecting', function () {
         spyOn(user, 'sendError');
         fireEvent('participant-reject', {roomRef: 'not-findable', userRef: user.getRef()});
         expect(user.sendError).toHaveBeenCalledWith('Room not found "not-findable"');
       });
-      it('should publish error if no room found while joining', function () {
+      it('should publish error if no user found while rejecting', function () {
         spyOn(user, 'sendError');
         fireEvent('participant-reject', {roomRef: room.info.ref, userRef: 'not-findable'});
         expect(user.sendError).toHaveBeenCalledWith('User not found "not-findable"');
@@ -114,12 +114,17 @@ describe('Server API', function () {
       fireEvent('request-voting-round', {name: 'abc', roomRef: room.info.ref});
       expect(room.actions.newVotingRound).toHaveBeenCalledWith('abc', user);
     });
-    it('should allow user to request voting', function () {
+    it('should pass on error when no room found when initiating a voting round', function () {
       spyOn(user, 'sendError');
       fireEvent('request-voting-round', {name: 'abc', roomRef: 'a'});
       expect(user.sendError).toHaveBeenCalledWith('Room not found "a"');
     });
     it('should allow user to request voting', function () {
+      spyOn(room.actions, 'voteReceived');
+      fireEvent('vote', {value: 3, roomRef: room.info.ref, taskRef: 'abc'});
+      expect(room.actions.voteReceived).toHaveBeenCalledWith(user, 3, 'abc');
+    });
+    it('should pass on message when user disconnects', function () {
       spyOn(user, 'disconnect');
       fireEvent('disconnect');
       expect(user.disconnect).toHaveBeenCalledWith();

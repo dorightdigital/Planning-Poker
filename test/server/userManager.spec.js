@@ -84,4 +84,14 @@ describe('User Manager', function () {
     guest.roomClosed('ref');
     expect(guestSocket.emit).toHaveBeenCalledWith('room-closed', {roomRef: 'ref'});
   });
+  it('should inform user (host) of full voting status', function () {
+    var voted = [];
+    var pending = [];
+    host.fullVotingStatus('vote-ref', pending, voted);
+    expect(hostSocket.emit).toHaveBeenCalledWith('full-voting-status', jasmine.any(Object));
+    var obj = hostSocket.emit.mostRecentCall.args[1];
+    expect(obj.voted).toBe(voted);
+    expect(obj.pending).toBe(pending);
+    expect(obj.voteRef).toBe('vote-ref');
+  });
 });

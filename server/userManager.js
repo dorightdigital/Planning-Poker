@@ -55,6 +55,14 @@ function createUser(socket) {
         taskName: taskName
       });
     },
+    fullVotingStatus: function (voteRef, pending, voted) {
+      socket.emit('full-voting-status', {
+        pending: pending,
+        voted: voted,
+        voteRef: voteRef
+      });
+    },
+    votingProgress: function () {},
     disconnect: function () {
       require('underscore').each(rooms, function (value) {
         var room = require('./roomManager').get(value);
