@@ -1,4 +1,4 @@
-define(['apiClient', 'shared/voteProgress'], function (api, vp) {
+define(['apiClient', 'shared/voteProgress', 'shared/resultRenderer'], function (api, vp, rr) {
   return {
     init: function ($elem) {
       api.onFullVotingStatus(function (pending, voted) {
@@ -17,6 +17,7 @@ define(['apiClient', 'shared/voteProgress'], function (api, vp) {
       api.onRoomClose(function () {
         $elem.remove();
       });
+      rr($elem);
     }
   };
 });

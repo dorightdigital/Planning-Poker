@@ -5,12 +5,7 @@ define(['jquery', 'apiClient', 'shared/resultRenderer'], function ($, api, rr) {
         var portString = window.location.port === '' ? '' : (':' + window.location.port);
         var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + room.url;
         $elem.html($('<h1/>').text('You\'re hosting room ' + room.name));
-        $elem.append($('<div/>').text('Request a vote ').append(
-          $('<form/>').submit(function (e) {
-            e.preventDefault();
-            api.requestVotes($(this).find('input').val());
-            return false;
-          }).append('<input/>')).append($('<div data-dom-widget="fullVoteStatus"/>')));
+        $elem.append('<div data-dom-widget="interactiveVoting"/>');
         $elem.append($('<ul data-dom-widget="incomingParticipantRequests"/>'));
         $elem.append(
           $('<div/>')
@@ -23,7 +18,6 @@ define(['jquery', 'apiClient', 'shared/resultRenderer'], function ($, api, rr) {
         $elem.append($('<div data-dom-widget="listParticipants"/>'));
         $elem.loadDomWidgets();
       });
-      rr($('body'));
     }
   }
 });

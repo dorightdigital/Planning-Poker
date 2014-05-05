@@ -51,6 +51,7 @@ describe('Room Manager', function () {
       room.actions.participantRequest(guest, 'abc');
       room.actions.participantAccept(guest, host);
     }
+
     beforeEach(function () {
       host = help.generateUser();
       guest = help.generateUser();
@@ -235,7 +236,7 @@ describe('Room Manager', function () {
         });
       });
     });
-    describe('sharing result', function (){
+    describe('finishing and restarting', function () {
       var guest;
       var guest2;
       var guest3;
@@ -261,41 +262,59 @@ describe('Room Manager', function () {
           spyOn(user, 'result');
         });
       });
-      it('should show send status when everyone agrees', function () {
-        _.each(allGuests, function (user) {
-          userVotes(user, 3)
+      describe('sharing results', function () {
+
+        it('should show send status when everyone agrees', function () {
+          _.each(allGuests, function (user) {
+            userVotes(user, 3)
+          });
+          _.each(allUsers, function (user) {
+            expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 3);
+          });
         });
-        _.each(allUsers, function (user) {
-          expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 3);
+        it('should show send correct answer when everyone agrees', function () {
+          _.each(allGuests, function (user) {
+            userVotes(user, 5)
+          });
+          _.each(allUsers, function (user) {
+            expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 5);
+          });
+        });
+        it('should not publish result until all users have voted', function () {
+          userVotes(guest, 3);
+          _.each(allUsers, function (user) {
+            expect(user.result).not.toHaveBeenCalled();
+          });
+        });
+        it('should publish individual result when no consensus', function () {
+          userVotes(guest, 8);
+          userVotes(guest2, 3);
+          userVotes(guest3, 3);
+          _.each(allGuests, function (user) {
+            expect(user.result).toHaveBeenCalledWith('vote-ref', 'varied', jasmine.any(Object));
+            var resultObj = user.result.mostRecentCall.args[2];
+            expect(resultObj).toEqual({
+              "3": ['b', 'c'],
+              "8": ['a']
+            });
+          });
         });
       });
-      it('should show send correct answer when everyone agrees', function () {
-        _.each(allGuests, function (user) {
-          userVotes(user, 5)
+      describe('restarting', function () {
+        beforeEach(function () {
+          guid.raw.andReturn('new-vote-ref');
+        })
+        it('should reset progress to zero on new voting round ', function () {
+          userVotes(guest, 8);
+          _.each(allUsers, function (user) {
+            spyOn(user, 'votingProgress');
+          });
+          room.actions.newVotingRound('abc', host);
+          _.each(allUsers, function (user) {
+            expect(user.votingProgress).toHaveBeenCalledWith('new-vote-ref', 0);
+          });
         });
-        _.each(allUsers, function (user) {
-          expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 5);
-        });
-      });
-      it('should not publish result until all users have voted', function () {
-        userVotes(guest, 3);
-        _.each(allUsers, function (user) {
-          expect(user.result).not.toHaveBeenCalled();
-        });
-      });
-      it('should publish individual result when no consensus', function () {
-        userVotes(guest, 8);
-        userVotes(guest2, 3);
-        userVotes(guest3, 3);
-        _.each(allGuests, function (user) {
-          expect(user.result).toHaveBeenCalledWith('vote-ref', 'varied', jasmine.any(Object));
-          var resultObj = user.result.mostRecentCall.args[2];
-          expect(resultObj).toEqual({
-            "3": ['b', 'c'],
-            "8": ['a']
-          })
-        });
-      });
+      })
     });
   });
 });

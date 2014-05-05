@@ -8,6 +8,8 @@ define(['jquery', 'apiClient', 'shared/voteProgress', 'shared/resultRenderer'], 
       $elem.append($('<form/>').append('<input class="name" placeholder="Your Name"/>').submit(function (e) {
         e.preventDefault();
         api.joinRoom(id, $(this).find('.name').val()).onApprove(function () {
+          var $div = $('<div/>').appendTo($elem);
+          rr($div);
           $elem.find('h1').text('You\'re in!');
           api.onVotingRequest(function (name, ref, roomRef) {
             if (roomRef !== id) {
@@ -15,15 +17,14 @@ define(['jquery', 'apiClient', 'shared/voteProgress', 'shared/resultRenderer'], 
               return;
             }
             $elem.find('h1').text('Request to vote on task: ' + name);
-            var $div = $('<div/>');
+            $div.html('');
             $.each(nums, function (key, num) {
               $div.append($('<button/>').text(num).click(function () {
                 api.vote(num, ref, roomRef);
-                $div.remove();
+                $div.html('');
               }));
             });
-            $elem.append($div);
-            $elem.append(vp());
+            $div.append(vp());
           });
         }).onReject(function () {
           $elem.find('h1').text('Nope, you\'re not allowed.');
@@ -33,7 +34,6 @@ define(['jquery', 'apiClient', 'shared/voteProgress', 'shared/resultRenderer'], 
       api.onRoomClose(function () {
         $elem.html('<h1>This room has been closed.</h1>');
       });
-      rr($('body'));
     }
   }
 });

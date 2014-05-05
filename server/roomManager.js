@@ -13,13 +13,7 @@ exports.create = function (host, name) {
   var ref = guid.raw();
   var participants = [];
   var potentialParticipants = [];
-  var votingRound;
-  var votingStatus = {
-    pending: [],
-    voted: [],
-    answers: {}
-  }
-
+  var votingStatus;
   function pushParticipantListToAllUsers() {
     var part = [];
     _.each(participants, function (participant) {
@@ -34,7 +28,7 @@ exports.create = function (host, name) {
   }
 
   function sendVotingStatusUpdate() {
-    var voteRef = votingRound[1];
+    var voteRef = votingStatus.ref;
     if (votingStatus.pending.length === 0) {
       var numOfDifferentAnswers = 0;
       var lastAnswer = 0;
@@ -60,6 +54,9 @@ exports.create = function (host, name) {
       host.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
     }
   }
+  function requireVoteFromParticipant(user) {
+    user.voteRequired(ref, votingStatus.ref, votingStatus.name);
+  }
 
   var room = rooms[ref] = {
     info: {
@@ -77,8 +74,8 @@ exports.create = function (host, name) {
           user.accessGranted(ref);
           participants.push(user);
           pushParticipantListToAllUsers();
-          if (votingRound) {
-            user.voteRequired.apply(null, votingRound);
+          if (votingStatus) {
+            requireVoteFromParticipant(user)
             votingStatus.pending.push(user.getName());
             sendVotingStatusUpdate();
           }
@@ -98,9 +95,15 @@ exports.create = function (host, name) {
           user.sendError('You can\'t start voting rounds unless you\'re the host.');
           return;
         }
-        votingRound = [ref, guid.raw(), name];
+        votingStatus = {
+          pending: [],
+          voted: [],
+          answers: {},
+          ref: guid.raw(),
+          name: name
+        };
         _.each(participants, function (participant) {
-          participant.voteRequired.apply(null, votingRound);
+          requireVoteFromParticipant(participant);
           votingStatus.pending.push(participant.getName());
         });
         sendVotingStatusUpdate();
@@ -110,7 +113,6 @@ exports.create = function (host, name) {
         var voteAsString = ('' + vote);
         votingStatus.answers[voteAsString] = votingStatus.answers[voteAsString] || []
         votingStatus.answers[voteAsString].push(userName);
-        console.log(votingStatus);
         votingStatus.voted.push(userName);
         votingStatus.pending = _.without(votingStatus.pending, userName);
         sendVotingStatusUpdate();

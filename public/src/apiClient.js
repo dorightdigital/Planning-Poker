@@ -14,9 +14,7 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
   logEvent('vote-result');
   return {
     openRoom: function (name) {
-      socket.emit('open-room', {name: name}, function (ref) {
-        console.log('joining room', ref);
-      });
+      socket.emit('open-room', {name: name});
     },
     onRoomReady: function (fn) {
       socket.on('room-ready', function (config) {

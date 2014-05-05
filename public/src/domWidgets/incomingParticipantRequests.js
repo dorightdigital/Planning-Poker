@@ -5,12 +5,12 @@ define(['apiClient'], function (api) {
         var $acceptButton = $('<button class="accept">Accept</button>');
         var $rejectButton = $('<button class="reject">Reject</button>');
         var $request = $('<li/>').text(config.name).append($acceptButton).append($rejectButton);
-        $acceptButton.on('click', function (e) {
+        $acceptButton.one('click', function (e) {
           e.preventDefault();
           api.acceptParticipant(config.ref);
           $request.fadeOut();
         });
-        $rejectButton.on('click', function (e) {
+        $rejectButton.one('click', function (e) {
           e.preventDefault();
           api.rejectParticipant(config.ref);
           $request.fadeOut();
