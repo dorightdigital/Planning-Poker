@@ -218,6 +218,12 @@ describe('Room Manager', function () {
           expect(host.fullVotingStatus).toHaveBeenCalled();
           expect(pendingNames).toContain('ghi');
         });
+        it('should update voting status when new guest leaves before voting', function () {
+          host.fullVotingStatus.reset();
+          room.actions.removeUser(guest);
+          expect(host.fullVotingStatus).toHaveBeenCalled();
+          expect(pendingNames).not.toContain('abc');
+        });
         it('should update voting status anonymously for guests and host', function () {
           room.actions.voteReceived(guest, 'known-guid', 13);
           expect(guest.votingProgress).toHaveBeenCalledWith('new-guid', .5);

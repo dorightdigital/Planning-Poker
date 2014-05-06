@@ -19,7 +19,7 @@ exports.create = function (host, name) {
     _.each(participants, function (participant) {
       part.push({
         name: participant.getName()
-      })
+      });
     });
     host.pushParticipantList(ref, part);
     _.each(participants, function (participant) {
@@ -126,6 +126,10 @@ exports.create = function (host, name) {
         } else {
           participants = _.without(participants, user);
           pushParticipantListToAllUsers();
+          if (votingStatus) {
+            votingStatus.pending = _.without(votingStatus.pending, user.getName())
+            sendVotingStatusUpdate();
+          }
         }
       }
     }
