@@ -1,4 +1,4 @@
-var apiClient = (function () {
+pp.service('api', [function () {
   var wsHost = 'ws://' + window.location.hostname + (window.config && window.config.port ? ':' + window.config.port : '');
   var socket = io.connect(wsHost, function () {
 
@@ -123,6 +123,4 @@ var apiClient = (function () {
     }
   };
   return  self;
-}());
-
-apiClient.onError(function (msg) {console.error(msg)});
+}]);

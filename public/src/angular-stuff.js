@@ -17,56 +17,56 @@ pp.config(function ($routeProvider) {
     });
 });
 
-pp.controller('roomParticipate', function ($scope, $routeParams) {
-  apiClient.requestRoomDetails($routeParams.roomRef, function (details) {
+pp.controller('roomParticipate', function ($scope, $routeParams, api) {
+  api.requestRoomDetails($routeParams.roomRef, function (details) {
     $scope.roomName = details.name;
   });
 });
-pp.controller('activeParticipants', function ($scope) {
-  apiClient.onParticipantUpdate(function(participantList) {
+pp.controller('activeParticipants', function ($scope, api) {
+  api.onParticipantUpdate(function(participantList) {
     $scope.guests = participantList;
     $scope.$apply();
   });
 });
-pp.controller('roomHost', function ($scope, $routeParams) {
+pp.controller('roomHost', function ($scope, $routeParams, api) {
   $scope.activePeople = {};
   var portString = window.location.port === '' ? '' : (':' + window.location.port);
   var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/join/' + $routeParams.roomRef;
-  apiClient.onError(function (msg) {
+  api.onError(function (msg) {
     if (msg.indexOf('Room not found') === 0) {
       window.location.href = "#/"
     }
   });
-  apiClient.requestRoomDetails($routeParams.roomRef, function (details) {
+  api.requestRoomDetails($routeParams.roomRef, function (details) {
     $scope.roomName = details.name;
     $scope.joinUrl = fullRoomUrl;
     $scope.$apply();
   });
-  apiClient.onJoinRequest(function (config) {
+  api.onJoinRequest(function (config) {
     console.log(config);
     $scope.pendingPeople = config.pendingParticipants;
     $scope.$apply();
   });
   $scope.accept = function (ref) {
-    apiClient.acceptParticipant(ref);
+    api.acceptParticipant(ref);
   };
   $scope.reject = function (ref) {
-    apiClient.rejectParticipant(ref);
+    api.rejectParticipant(ref);
   };
 });
-pp.controller('roomManager', function ($scope) {
+pp.controller('roomManager', function ($scope, api) {
   console.log('scope', $scope);
   $scope.createRoom = function () {
     var roomName = $scope.cr.roomName;
-    apiClient.roomName = roomName;
-    apiClient.openRoom(roomName, function (room) {
+    api.roomName = roomName;
+    api.openRoom(roomName, function (room) {
       window.location.href = '#/host/' + room.ref;
     });
   }
 });
-pp.controller('roomJoiner', function ($scope, $routeParams) {
+pp.controller('roomJoiner', function ($scope, $routeParams, api) {
   $scope.joinRoom = function () {
-    apiClient.joinRoom($routeParams.roomRef, $scope.join.name)
+    api.joinRoom($routeParams.roomRef, $scope.join.name)
       .onApprove(function (info) {
         console.log('accept', info);
       })

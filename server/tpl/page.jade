@@ -3,7 +3,6 @@ html(ng-app="pp")
     head
         title= "Planning Poker"
         script(src="/socket.io/socket.io.js")
-        script(src="src/apiClient.js")
         script.
             window.config = {port: #{config.port}}
         include ../js-dependencies.html
