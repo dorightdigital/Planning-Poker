@@ -71,7 +71,7 @@ describe('Server API', function () {
     });
     it('should publish error if no room found while joining', function () {
       fireEvent('join-room', {ref: 'not-findable', name: 'abc'});
-      expect(socket.emit).toHaveBeenCalledWith('error', 'Room not found "not-findable"');
+      expect(socket.emit).toHaveBeenCalledWith('server-error', 'Room not found "not-findable"');
     });
     describe('acceptance', function () {
       it('should inform room of acceptance', function () {
@@ -128,6 +128,17 @@ describe('Server API', function () {
       spyOn(user, 'disconnect');
       fireEvent('disconnect');
       expect(user.disconnect).toHaveBeenCalledWith();
+    });
+    it('should send back room details on ping', function () {
+      spyOn(user, 'roomDetails');
+      fireEvent('ping-room-details', {roomRef: room.info.ref});
+      expect(user.roomDetails).toHaveBeenCalledWith(room.info);
+    });
+    it('should send details of any room', function () {
+      var newRoom = rm.create(help.generateUser(), 'room name!');
+      spyOn(user, 'roomDetails');
+      fireEvent('ping-room-details', {roomRef: newRoom.info.ref});
+      expect(user.roomDetails).toHaveBeenCalledWith(newRoom.info);
     });
   });
 });

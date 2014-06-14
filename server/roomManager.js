@@ -58,6 +58,13 @@ exports.create = function (host, name) {
     user.voteRequired(ref, votingStatus.ref, votingStatus.name);
   }
 
+  function pushPendingParticipantsToHost() {
+    var list = _.map(potentialParticipants, function (user) {
+      return {name: user.getName(), ref: user.getRef()}
+    });
+    host.participantRequest(list, room);
+  }
+
   var room = rooms[ref] = {
     info: {
       name: name,
@@ -67,13 +74,15 @@ exports.create = function (host, name) {
     actions: {
       participantRequest: function (user) {
         potentialParticipants.push(user);
-        host.participantRequest(user, room, user.getName());
+        pushPendingParticipantsToHost();
       },
       participantAccept: function (user, acceptor) {
         if (acceptor === host) {
           user.accessGranted(ref);
           participants.push(user);
           pushParticipantListToAllUsers();
+          potentialParticipants = _.without(potentialParticipants, user);
+          pushPendingParticipantsToHost();
           if (votingStatus) {
             requireVoteFromParticipant(user)
             votingStatus.pending.push(user.getName());
@@ -86,6 +95,8 @@ exports.create = function (host, name) {
       participantReject: function (user, acceptor) {
         if (acceptor === host) {
           user.accessRefused(ref);
+          potentialParticipants = _.without(potentialParticipants, user);
+          pushPendingParticipantsToHost();
         } else {
           acceptor.sendError('You can\'t reject users unless you\'re the host.')
         }
@@ -120,6 +131,9 @@ exports.create = function (host, name) {
       removeUser: function (user) {
         if (user === host) {
           _.each(potentialParticipants, function (part) {
+            part.roomClosed(room);
+          });
+          _.each(participants, function (part) {
             part.roomClosed(room);
           });
           delete rooms[room.info.ref];

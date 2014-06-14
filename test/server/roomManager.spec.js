@@ -59,91 +59,111 @@ describe('Room Manager', function () {
       guest.setName('Miss. Guest');
       room = roomManager.create(host, 'abc');
     });
-    it('should inform host when user requests to join room', function () {
-      spyOn(host, 'participantRequest');
-      guest.setName('abc');
-      room.actions.participantRequest(guest);
-      expect(host.participantRequest).toHaveBeenCalledWith(guest, room, 'abc');
-    });
-    it('should inform user when they are accepted by host', function () {
-      spyOn(guest, 'accessGranted');
-      room.actions.participantRequest(guest, 'abc');
-      room.actions.participantAccept(guest, host);
-      expect(guest.accessGranted).toHaveBeenCalledWith(room.info.ref);
-    });
-    it('should ignore approval when not from host', function () {
-      var randomUser = help.generateUser();
-      spyOn(guest, 'accessGranted');
-      spyOn(randomUser, 'sendError');
-      room.actions.participantRequest(guest, 'abc');
-      room.actions.participantAccept(guest, randomUser);
-      expect(guest.accessGranted).not.toHaveBeenCalled();
-      expect(randomUser.sendError).toHaveBeenCalledWith('You can\'t approve users unless you\'re the host.');
-    });
-    it('should inform user when they are rejected by host', function () {
-      spyOn(guest, 'accessRefused');
-      room.actions.participantRequest(guest, 'abc');
-      room.actions.participantReject(guest, host);
-      expect(guest.accessRefused).toHaveBeenCalledWith(room.info.ref);
-    });
-    it('should inform all users in room when participant joins', function () {
-      var guest2 = help.generateUser();
-      guest2.setName('Abc')
-      room.actions.participantRequest(guest, 'abc');
-      room.actions.participantRequest(guest2, 'abc');
-      room.actions.participantAccept(guest, host);
-      var users = [host, guest, guest2];
-      _.each(users, function (user) {
-        spyOn(user, 'pushParticipantList');
-      });
-      room.actions.participantAccept(guest2, host);
-      _.each(users, function (user) {
-        var data = user.pushParticipantList.calls[0].args[1];
-        expect(user.pushParticipantList).toHaveBeenCalledWith(room.info.ref, jasmine.any(Object));
-        expect(host.pushParticipantList.mostRecentCall.args[1]).toEqual([
-          {
-            name: 'Miss. Guest'
-          },
-          {
-            name: 'Abc'
-          }
-        ]);
+    describe('Joining a room', function () {
+      function potentialParticipantList() {
+        return host.participantRequest.mostRecentCall.args[0];
+      }
 
+      it('should inform host when user requests to join room', function () {
+        spyOn(host, 'participantRequest');
+        guest.setName('abc');
+        room.actions.participantRequest(guest);
+        expect(host.participantRequest).toHaveBeenCalledWith(jasmine.any(Array), room);
+        expect(potentialParticipantList()).toEqual([{name: 'abc',ref: guest.getRef()}]);
       });
-    });
-    it('should send updated participant list when guest leaves room', function () {
-      room.actions.participantRequest(guest);
-      room.actions.participantAccept(guest, host);
-      spyOn(host, 'pushParticipantList');
-      room.actions.removeUser(guest);
-      expect(host.pushParticipantList).toHaveBeenCalled();
-      expect(host.pushParticipantList.mostRecentCall.args[1]).toEqual({});
-    });
-    it('should close room when host leaves', function () {
-      var pendingGuest = help.generateUser();
-      room.actions.participantRequest(pendingGuest);
-      room.actions.participantRequest(guest);
-      room.actions.participantAccept(guest, host);
-      spyOn(guest, 'pushParticipantList');
-      spyOn(guest, 'roomClosed');
-      spyOn(pendingGuest, 'roomClosed');
-      room.actions.removeUser(host);
-      expect(guest.pushParticipantList).not.toHaveBeenCalled();
-      expect(guest.roomClosed).toHaveBeenCalled();
-      expect(pendingGuest.roomClosed).toHaveBeenCalled();
-    });
-    it('should properly remove room when host leaves', function () {
-      room.actions.removeUser(host);
-      expect(roomManager.exists(room.info.ref)).toBeFalsy();
-    });
-    it('should ignore rejection when not from host', function () {
-      var randomUser = help.generateUser();
-      spyOn(guest, 'accessRefused');
-      spyOn(randomUser, 'sendError');
-      room.actions.participantRequest(guest, 'abc');
-      room.actions.participantReject(guest, randomUser);
-      expect(guest.accessRefused).not.toHaveBeenCalled();
-      expect(randomUser.sendError).toHaveBeenCalledWith('You can\'t reject users unless you\'re the host.');
+      it('should update participant requests on acceptance', function () {
+        spyOn(host, 'participantRequest');
+        guest.setName('abc');
+        room.actions.participantRequest(guest);
+        host.participantRequest.reset();
+        room.actions.participantAccept(guest, host);
+        expect(host.participantRequest).toHaveBeenCalledWith(jasmine.any(Array), room);
+        expect(potentialParticipantList()).toEqual([]);
+      });
+      it('should update participant requests on rejection', function () {
+        spyOn(host, 'participantRequest');
+        guest.setName('abc');
+        room.actions.participantRequest(guest);
+        host.participantRequest.reset();
+        room.actions.participantReject(guest, host);
+        expect(host.participantRequest).toHaveBeenCalledWith(jasmine.any(Array), room);
+        expect(potentialParticipantList()).toEqual([]);
+      });
+      it('should inform user when they are accepted by host', function () {
+        spyOn(guest, 'accessGranted');
+        room.actions.participantRequest(guest, 'abc');
+        room.actions.participantAccept(guest, host);
+        expect(guest.accessGranted).toHaveBeenCalledWith(room.info.ref);
+      });
+      it('should ignore approval when not from host', function () {
+        var randomUser = help.generateUser();
+        spyOn(guest, 'accessGranted');
+        spyOn(randomUser, 'sendError');
+        room.actions.participantRequest(guest, 'abc');
+        room.actions.participantAccept(guest, randomUser);
+        expect(guest.accessGranted).not.toHaveBeenCalled();
+        expect(randomUser.sendError).toHaveBeenCalledWith('You can\'t approve users unless you\'re the host.');
+      });
+      it('should inform user when they are rejected by host', function () {
+        spyOn(guest, 'accessRefused');
+        room.actions.participantRequest(guest, 'abc');
+        room.actions.participantReject(guest, host);
+        expect(guest.accessRefused).toHaveBeenCalledWith(room.info.ref);
+      });
+      it('should inform all users in room when participant joins', function () {
+        var guest2 = help.generateUser();
+        guest2.setName('Abc')
+        room.actions.participantRequest(guest, 'abc');
+        room.actions.participantRequest(guest2, 'abc');
+        room.actions.participantAccept(guest, host);
+        var users = [host, guest, guest2];
+        _.each(users, function (user) {
+          spyOn(user, 'pushParticipantList');
+        });
+        room.actions.participantAccept(guest2, host);
+        _.each(users, function (user) {
+          var data = user.pushParticipantList.calls[0].args[1];
+          expect(user.pushParticipantList).toHaveBeenCalledWith(room.info.ref, jasmine.any(Object));
+          expect(data).toEqual([
+            {name: 'Miss. Guest'},
+            {name: 'Abc'}
+          ]);
+        });
+      });
+      it('should send updated participant list when guest leaves room', function () {
+        room.actions.participantRequest(guest);
+        room.actions.participantAccept(guest, host);
+        spyOn(host, 'pushParticipantList');
+        room.actions.removeUser(guest);
+        expect(host.pushParticipantList).toHaveBeenCalled();
+        expect(host.pushParticipantList.mostRecentCall.args[1]).toEqual({});
+      });
+      it('should close room when host leaves', function () {
+        var pendingGuest = help.generateUser();
+        room.actions.participantRequest(pendingGuest);
+        room.actions.participantRequest(guest);
+        room.actions.participantAccept(guest, host);
+        spyOn(guest, 'pushParticipantList');
+        spyOn(guest, 'roomClosed');
+        spyOn(pendingGuest, 'roomClosed');
+        room.actions.removeUser(host);
+        expect(guest.pushParticipantList).not.toHaveBeenCalled();
+        expect(guest.roomClosed).toHaveBeenCalled();
+        expect(pendingGuest.roomClosed).toHaveBeenCalled();
+      });
+      it('should properly remove room when host leaves', function () {
+        room.actions.removeUser(host);
+        expect(roomManager.exists(room.info.ref)).toBeFalsy();
+      });
+      it('should ignore rejection when not from host', function () {
+        var randomUser = help.generateUser();
+        spyOn(guest, 'accessRefused');
+        spyOn(randomUser, 'sendError');
+        room.actions.participantRequest(guest, 'abc');
+        room.actions.participantReject(guest, randomUser);
+        expect(guest.accessRefused).not.toHaveBeenCalled();
+        expect(randomUser.sendError).toHaveBeenCalledWith('You can\'t reject users unless you\'re the host.');
+      });
     });
     describe('voting', function () {
       var guest2;

@@ -54,5 +54,10 @@ exports.init = function (server) {
         room.actions.voteReceived(user, config.value, config.taskRef);
       });
     });
+    socket.on('ping-room-details', function (config) {
+      withSpecifiedRoom(config.roomRef, function (room) {
+        user.roomDetails(room.info);
+      });
+    });
   });
 };

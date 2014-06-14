@@ -8,14 +8,4 @@ html(ng-app="pp")
             window.config = {port: #{config.port}}
         include ../js-dependencies.html
         include ../app-includes.html
-    body
-        form(name="cr",ng-submit="createRoom()",ng-controller="roomManager")
-            div(ng-if="!room.ready")
-                h1= "Start a planning poker room"
-                p
-                    input(ng-model='cr.roomName', placeholder='Room Name')
-                p
-                    input(ng-if="cr.roomName", type="submit", value="Create Room {{cr.roomName}}")
-            div(ng-if="room.ready")
-                h1= "Hosting room {{room.name}}"
-                p= "Participants can join at {{room.url}}"
+    body(ng-view)

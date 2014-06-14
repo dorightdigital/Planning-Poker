@@ -44,7 +44,7 @@ var apiClient = (function () {
       socket.on('participant-request', fn);
     },
     onError: function (fn) {
-      socket.on('error', fn);
+      socket.on('server-error', fn);
     },
     onRoomClose: function (fn) {
       socket.on('room-closed', fn);
@@ -114,7 +114,15 @@ var apiClient = (function () {
       socket.on('vote-result', function (data) {
         fn(data);
       });
+    },
+    requestRoomDetails: function (roomRef, fn) {
+      socket.on('room-details', function (data) {
+        fn(data);
+      });
+      socket.emit('ping-room-details', {roomRef: roomRef});
     }
   };
-  return  self
+  return  self;
 }());
+
+apiClient.onError(function (msg) {console.error(msg)});

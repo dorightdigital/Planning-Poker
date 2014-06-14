@@ -31,23 +31,25 @@ describe('User Manager', function () {
     host.roomReady(room);
     expect(hostSocket.emit).toHaveBeenCalledWith('room-ready', room.info);
   });
-  it('should inform user of participantRequest', function () {
-    host.participantRequest(guest, room, 'guest');
+  it('should host user of participantRequest', function () {
+    var participantList = [];
+    host.participantRequest(participantList, room);
     expect(hostSocket.emit).toHaveBeenCalledWith('participant-request', {
-      name: 'guest',
-      ref: guest.getRef()
+      roomRef: room.info.ref,
+      pendingParticipants: participantList
     });
   });
   it('should inform user of participantRequest', function () {
-    host.participantRequest(guest, room, 'Another');
+    var participantList = [];
+    host.participantRequest(participantList, room, 'Another');
     expect(hostSocket.emit).toHaveBeenCalledWith('participant-request', {
-      name: 'Another',
-      ref: guest.getRef()
+      roomRef: room.info.ref,
+      pendingParticipants: jasmine.any(Array)
     });
   });
-  it('should inform user of participantRequest', function () {
+  it('should inform user of error during participantRequest', function () {
     host.sendError('error message');
-    expect(hostSocket.emit).toHaveBeenCalledWith('error', 'error message');
+    expect(hostSocket.emit).toHaveBeenCalledWith('server-error', 'error message');
   });
   it('should inform user of granted access', function () {
     guest.accessGranted('some-room');
@@ -95,13 +97,13 @@ describe('User Manager', function () {
     expect(obj.voteRef).toBe('vote-ref');
   });
   it('should inform user (guest) of voting progress', function () {
-    guest.votingProgress('vote-ref', 3/5);
+    guest.votingProgress('vote-ref', 3 / 5);
     expect(guestSocket.emit).toHaveBeenCalledWith('voting-progress', jasmine.any(Object));
     var obj = guestSocket.emit.mostRecentCall.args[1];
-    expect(obj.progressPercentage).toBe(3/5*100);
+    expect(obj.progressPercentage).toBe(3 / 5 * 100);
     expect(obj.voteRef).toBe('vote-ref');
   });
-  it('should inform user (guest) of voting progress', function () {
+  it('should inform user (guest) of results', function () {
     var objOrValue = {};
     guest.result('vote-ref', 'keyword', objOrValue);
     expect(guestSocket.emit).toHaveBeenCalledWith('vote-result', jasmine.any(Object));
@@ -109,5 +111,10 @@ describe('User Manager', function () {
     expect(obj.voteRef).toBe('vote-ref');
     expect(obj.resultType).toBe('keyword');
     expect(obj.resultDetail).toBe(objOrValue);
+  });
+  it('should pass on room info to user', function () {
+    var obj = {};
+    guest.roomDetails(obj);
+    expect(guestSocket.emit).toHaveBeenCalledWith('room-details', obj);
   });
 });

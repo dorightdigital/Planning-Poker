@@ -18,8 +18,11 @@ function createUser(socket) {
     setName: function (newName) {
       name = newName;
     },
-    participantRequest: function (user, room, name) {
-      socket.emit('participant-request', { name : name, ref : user.getRef() })
+    participantRequest: function (participants, room) {
+      socket.emit('participant-request', {
+        roomRef: room.info.ref,
+        pendingParticipants: participants
+      })
     },
     roomReady: function (room) {
       rooms.push(room.info.ref);
@@ -37,7 +40,7 @@ function createUser(socket) {
       });
     },
     sendError: function (message) {
-      socket.emit('error', message);
+      socket.emit('server-error', message);
     },
     pushParticipantList: function (roomRef, list) {
       socket.emit('participant-update', {
@@ -74,6 +77,9 @@ function createUser(socket) {
         resultType: type,
         resultDetail: detail
       });
+    },
+    roomDetails: function (roomInfo) {
+      socket.emit('room-details', roomInfo);
     },
     disconnect: function () {
       require('underscore').each(rooms, function (value) {
