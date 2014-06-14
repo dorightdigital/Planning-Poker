@@ -1,11 +1,21 @@
 doctype HTML
-html
+html(ng-app="pp")
     head
         title= "Planning Poker"
+        script(src="/socket.io/socket.io.js")
+        script(src="src/apiClient.js")
         script.
-          window.config = {port: #{config.port}}
+            window.config = {port: #{config.port}}
         include ../js-dependencies.html
-        link(rel='stylesheet',href='/src/style.css')
-    body(data-dom-widget='pageTurner hostRoomWhenReady')
-        h1= "Start a planning poker room"
-        input(data-dom-widget='setupRoom', placeholder='Room Name')
+        include ../app-includes.html
+    body
+        form(name="cr",ng-submit="createRoom()",ng-controller="roomManager")
+            div(ng-if="!room.ready")
+                h1= "Start a planning poker room"
+                p
+                    input(ng-model='cr.roomName', placeholder='Room Name')
+                p
+                    input(ng-if="cr.roomName", type="submit", value="Create Room {{cr.roomName}}")
+            div(ng-if="room.ready")
+                h1= "Hosting room {{room.name}}"
+                p= "Participants can join at {{room.url}}"

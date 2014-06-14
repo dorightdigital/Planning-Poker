@@ -1,4 +1,4 @@
-define('apiClient', ['/socket.io/socket.io.js'], function (io) {
+var apiClient = (function () {
   var wsHost = 'ws://' + window.location.hostname + (window.config && window.config.port ? ':' + window.config.port : '');
   var socket = io.connect(wsHost, function () {
 
@@ -12,9 +12,12 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
   logEvent('participant-leave');
   logEvent('room-close');
   logEvent('vote-result');
-  return {
-    openRoom: function (name) {
+  var self = {
+    openRoom: function (name, callback) {
       socket.emit('open-room', {name: name});
+      if (callback) {
+        self.onRoomReady(callback);
+      }
     },
     onRoomReady: function (fn) {
       socket.on('room-ready', function (config) {
@@ -35,7 +38,7 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
           return output;
         }
       };
-    return output;
+      return output;
     },
     onJoinRequest: function (fn) {
       socket.on('participant-request', fn);
@@ -112,5 +115,6 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
         fn(data);
       });
     }
-  }
-});
+  };
+  return  self
+}());
