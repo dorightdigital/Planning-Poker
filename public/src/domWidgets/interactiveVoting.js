@@ -9,5 +9,5 @@ define(['apiClient'], function (api) {
           return false;
         }).append('<input/>')).append($('<div data-dom-widget="fullVoteStatus"/>').loadDomWidgets()));
     }
-  }
+  };
 });

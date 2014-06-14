@@ -60,7 +60,7 @@ exports.create = function (host, name) {
 
   function pushPendingParticipantsToHost() {
     var list = _.map(potentialParticipants, function (user) {
-      return {name: user.getName(), ref: user.getRef()}
+      return {name: user.getName(), ref: user.getRef()};
     });
     host.participantRequest(list, room);
   }
@@ -84,12 +84,12 @@ exports.create = function (host, name) {
           potentialParticipants = _.without(potentialParticipants, user);
           pushPendingParticipantsToHost();
           if (votingStatus) {
-            requireVoteFromParticipant(user)
+            requireVoteFromParticipant(user);
             votingStatus.pending.push(user.getName());
             sendVotingStatusUpdate();
           }
         } else {
-          acceptor.sendError('You can\'t approve users unless you\'re the host.')
+          acceptor.sendError('You can\'t approve users unless you\'re the host.');
         }
       },
       participantReject: function (user, acceptor) {
@@ -98,7 +98,7 @@ exports.create = function (host, name) {
           potentialParticipants = _.without(potentialParticipants, user);
           pushPendingParticipantsToHost();
         } else {
-          acceptor.sendError('You can\'t reject users unless you\'re the host.')
+          acceptor.sendError('You can\'t reject users unless you\'re the host.');
         }
       },
       newVotingRound: function (name, user) {
@@ -122,7 +122,7 @@ exports.create = function (host, name) {
       voteReceived: function (user, vote) {
         var userName = user.getName();
         var voteAsString = ('' + vote);
-        votingStatus.answers[voteAsString] = votingStatus.answers[voteAsString] || []
+        votingStatus.answers[voteAsString] = votingStatus.answers[voteAsString] || [];
         votingStatus.answers[voteAsString].push(userName);
         votingStatus.voted.push(userName);
         votingStatus.pending = _.without(votingStatus.pending, userName);
@@ -141,7 +141,7 @@ exports.create = function (host, name) {
           participants = _.without(participants, user);
           pushParticipantListToAllUsers();
           if (votingStatus) {
-            votingStatus.pending = _.without(votingStatus.pending, user.getName())
+            votingStatus.pending = _.without(votingStatus.pending, user.getName());
             sendVotingStatusUpdate();
           }
         }

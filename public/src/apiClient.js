@@ -77,7 +77,7 @@ pp.service('api', [function () {
         roomRef: roomRef,
         taskRef: taskRef,
         value: vote
-      })
+      });
     },
     onParticipantUpdate: function (fn) {
       socket.on('participant-update', function (data) {

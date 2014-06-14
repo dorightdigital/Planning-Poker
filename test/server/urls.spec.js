@@ -34,7 +34,7 @@ describe('URLs', function () {
     });
     it('should setup home page', function () {
       expectRouteToRender('/', 'page');
-    })
+    });
     it('should setup room page', function () {
       var room = {
         info: {}

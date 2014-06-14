@@ -112,7 +112,7 @@ describe('Room Manager', function () {
       });
       it('should inform all users in room when participant joins', function () {
         var guest2 = help.generateUser();
-        guest2.setName('Abc')
+        guest2.setName('Abc');
         room.actions.participantRequest(guest, 'abc');
         room.actions.participantRequest(guest2, 'abc');
         room.actions.participantAccept(guest, host);
@@ -246,9 +246,9 @@ describe('Room Manager', function () {
         });
         it('should update voting status anonymously for guests and host', function () {
           room.actions.voteReceived(guest, 'known-guid', 13);
-          expect(guest.votingProgress).toHaveBeenCalledWith('new-guid', .5);
-          expect(guest2.votingProgress).toHaveBeenCalledWith('new-guid', .5);
-          expect(host.votingProgress).toHaveBeenCalledWith('new-guid', .5);
+          expect(guest.votingProgress).toHaveBeenCalledWith('new-guid', 0.5);
+          expect(guest2.votingProgress).toHaveBeenCalledWith('new-guid', 0.5);
+          expect(host.votingProgress).toHaveBeenCalledWith('new-guid', 0.5);
         });
         it('should update voting status when new guest joins', function () {
           room.actions.voteReceived(guest, 'known-guid', 13);
@@ -292,7 +292,7 @@ describe('Room Manager', function () {
 
         it('should show send status when everyone agrees', function () {
           _.each(allGuests, function (user) {
-            userVotes(user, 3)
+            userVotes(user, 3);
           });
           _.each(allUsers, function (user) {
             expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 3);
@@ -300,7 +300,7 @@ describe('Room Manager', function () {
         });
         it('should show send correct answer when everyone agrees', function () {
           _.each(allGuests, function (user) {
-            userVotes(user, 5)
+            userVotes(user, 5);
           });
           _.each(allUsers, function (user) {
             expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 5);
@@ -329,7 +329,7 @@ describe('Room Manager', function () {
       describe('restarting', function () {
         beforeEach(function () {
           guid.raw.andReturn('new-vote-ref');
-        })
+        });
         it('should reset progress to zero on new voting round ', function () {
           userVotes(guest, 8);
           _.each(allUsers, function (user) {
@@ -340,7 +340,7 @@ describe('Room Manager', function () {
             expect(user.votingProgress).toHaveBeenCalledWith('new-vote-ref', 0);
           });
         });
-      })
+      });
     });
   });
 });

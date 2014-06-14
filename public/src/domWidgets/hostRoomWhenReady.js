@@ -19,5 +19,5 @@ define(['jquery', 'apiClient', 'shared/resultRenderer'], function ($, api, rr) {
         $elem.loadDomWidgets();
       });
     }
-  }
+  };
 });

@@ -34,7 +34,7 @@ pp.controller('roomHost', function ($scope, $routeParams, api) {
   var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/join/' + $routeParams.roomRef;
   api.onError(function (msg) {
     if (msg.indexOf('Room not found') === 0) {
-      window.location.href = "#/"
+      window.location.href = "#/";
     }
   });
   api.requestRoomDetails($routeParams.roomRef, function (details) {
@@ -62,7 +62,7 @@ pp.controller('roomManager', function ($scope, api) {
     api.openRoom(roomName, function (room) {
       window.location.href = '#/host/' + room.ref;
     });
-  }
+  };
 });
 pp.controller('roomJoiner', function ($scope, $routeParams, api) {
   $scope.joinRoom = function () {
@@ -71,7 +71,7 @@ pp.controller('roomJoiner', function ($scope, $routeParams, api) {
         console.log('accept', info);
       })
       .onReject(function (info) {
-        console.warn('reject', info)
+        console.warn('reject', info);
       });
-  }
+  };
 });

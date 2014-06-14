@@ -7,8 +7,7 @@ function createUser(socket) {
   var ref = guid.raw();
   var name;
   var rooms = [];
-  var user;
-  return user = {
+  var user = {
     getRef: function () {
       return ref;
     },
@@ -22,7 +21,7 @@ function createUser(socket) {
       socket.emit('participant-request', {
         roomRef: room.info.ref,
         pendingParticipants: participants
-      })
+      });
     },
     roomReady: function (room) {
       rooms.push(room.info.ref);
@@ -92,18 +91,20 @@ function createUser(socket) {
       });
     }
   };
+  return user;
 }
 
 exports.getFromRef = function (ref) {
   return usersByRef[ref];
-}
+};
 exports.getFromSocket = function (socket) {
   var id = socketsByIndex.indexOf(socket);
   if (id === -1) {
     var user = createUser(socket);
     id = socketsByIndex.length;
     socketsByIndex[id] = socket;
-    return usersByIndex[id] = usersByRef[user.getRef()] = user;
+    usersByIndex[id] = usersByRef[user.getRef()] = user;
+    return user;
   }
   return usersByIndex[id];
 };
