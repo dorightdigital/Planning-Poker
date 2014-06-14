@@ -4,3 +4,4 @@ node_modules
 _SpecRunner.html
 run.pid
 nohup.log
+bower_components
