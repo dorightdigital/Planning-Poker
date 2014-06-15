@@ -1,2 +1,33 @@
-<h1>In room {{roomName}}</h1>
-  <p>Waiting for a vote</p>
+<p>Current state: {{state}}</p>
+
+<div ng-switch="state">
+  <div ng-switch-when="in-room">
+    <h1>In room {{roomName}}</h1>
+
+    <p>Waiting for a vote</p>
+  </div>
+  <div ng-switch-when="pending">
+    <h1>Waiting to see if you are allowed into {{roomName}}</h1>
+  </div>
+  <div ng-switch-when="rejected">
+    <h1>You've been rejected from {{roomName}}</h1>
+
+    <p>Refresh the page to retry.</p>
+  </div>
+  <div ng-switch-when="voting">
+    <h1>Vote on {{taskName}}</h1>
+
+    <div ng-repeat="value in [1,2,3,5,8,13,21]">
+      <button ng-click="vote(value)">{{value}}</button>
+    </div>
+
+  </div>
+  <div ng-switch-default>
+    <form name="join" ng-submit="joinRoom(join.name)">
+      <input ng-model="join.name" placeholder="Your name" required/>
+      <input type="submit" value="Join"/>
+    </form>
+  </div>
+</div>
+
+<guestlist/>

@@ -4,52 +4,53 @@ var pp = angular.module('pp', [
 ]);
 
 pp.config(function ($routeProvider) {
-  $routeProvider.when('/', {
-    templateUrl: 'app/partials/createRoom.html',
-    controller: 'roomManager'
-  }).when('/host/:roomRef', {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'app/partials/createRoom.html',
+      controller: 'roomManager'
+    }).when('/host/:roomRef', {
       templateUrl: 'app/partials/hostRoom.html',
       controller: 'roomHost'
-    }).when('/join/:roomRef', {
-      templateUrl: 'app/partials/joinRoom.html',
-      controller: 'roomJoin'
     }).when('/participate/:roomRef', {
       templateUrl: 'app/partials/room.html',
       controller: 'roomParticipate'
-    }).when('/vote/:roomRef/:voteRef', {
-      templateUrl: 'app/partials/vote.html',
-      controller: 'roomVote'
     }).otherwise({
       templateUrl: 'app/partials/notFound.html'
     });
 });
 
-pp.controller('roomJoin', function ($scope, $routeParams, api) {
-  api.requestRoomDetails($routeParams.roomRef, function (details) {
-    $scope.roomName = details.name;
-  });
-});
-pp.controller('roomVote', function ($scope, $routeParams, api) {
-});
 pp.controller('roomParticipate', function ($scope, $routeParams, api) {
+  function setState(newState) {
+    $scope.state = newState;
+  }
+
+  $scope.joinRoom = function (name) {
+    setState('pending');
+    api.joinRoom($routeParams.roomRef, name)
+      .onApprove(function () {
+        setState('in-room');
+        $scope.$apply();
+      })
+      .onReject(function () {
+        setState('rejected');
+        $scope.$apply();
+      });
+  };
   api.requestRoomDetails($routeParams.roomRef, function (info) {
     $scope.roomName = info.name;
     $scope.$apply();
   });
-  api.onVotingRequest(function(conf) {
-    window.location.href = '#/vote/' + $routeParams.roomRef + '/' + conf.voteRef;
-  });
-});
-pp.controller('activeParticipants', function ($scope, api) {
-  api.onParticipantUpdate(function (participantList) {
-    $scope.guests = participantList;
+  api.onVotingRequest(function (conf) {
+    $scope.vote = conf;
+    setState('voting');
     $scope.$apply();
   });
 });
+
 pp.controller('roomHost', function ($scope, $routeParams, api) {
   $scope.activePeople = {};
   var portString = window.location.port === '' ? '' : (':' + window.location.port);
-  var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/join/' + $routeParams.roomRef;
+  var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/participate/' + $routeParams.roomRef;
   api.onError(function (msg) {
     if (msg.indexOf('Room not found') === 0) {
       window.location.href = "#/";
@@ -82,17 +83,6 @@ pp.controller('roomManager', function ($scope, api) {
     });
   };
 });
-pp.controller('roomJoiner', function ($scope, $routeParams, api) {
-  $scope.joinRoom = function () {
-    api.joinRoom($routeParams.roomRef, $scope.join.name)
-      .onApprove(function () {
-        window.location.href = '#/participate/' + $routeParams.roomRef;
-      })
-      .onReject(function () {
-        window.location.href = '#/rejected';
-      });
-  };
-});
 pp.controller('requestVote', function ($scope, $routeParams, api) {
   $scope.submit = function () {
     api.requestVotes($scope.newVote.name);
@@ -100,7 +90,7 @@ pp.controller('requestVote', function ($scope, $routeParams, api) {
 });
 
 angular.module('components', [])
-  .directive('qrcode', ['$document', function ( ) {
+  .directive('qrcode', function () {
     return {
       scope: {
         'url': '@'
@@ -112,10 +102,23 @@ angular.module('components', [])
           element.text('');
           jQuery(element[0]).qrcode($scope.url);
         }
+
         update();
         $scope.$watch('url', function () {
           update();
         });
       }
     };
-  }]);
+  })
+  .directive('guestlist', function (api) {
+    return {
+      restrict: 'E',
+      templateUrl: 'app/partials/guestList.html',
+      controller: function ($scope, api) {
+        api.onParticipantUpdate(function (participantList) {
+          $scope.guests = participantList;
+          $scope.$apply();
+        });
+      }
+    };
+  });
