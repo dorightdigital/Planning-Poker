@@ -12,15 +12,32 @@ pp.config(function ($routeProvider) {
       controller: 'roomHost'
     }).when('/join/:roomRef', {
       templateUrl: 'app/partials/joinRoom.html',
+      controller: 'roomJoin'
+    }).when('/participate/:roomRef', {
+      templateUrl: 'app/partials/room.html',
       controller: 'roomParticipate'
+    }).when('/vote/:roomRef/:voteRef', {
+      templateUrl: 'app/partials/vote.html',
+      controller: 'roomVote'
     }).otherwise({
       templateUrl: 'app/partials/notFound.html'
     });
 });
 
-pp.controller('roomParticipate', function ($scope, $routeParams, api) {
+pp.controller('roomJoin', function ($scope, $routeParams, api) {
   api.requestRoomDetails($routeParams.roomRef, function (details) {
     $scope.roomName = details.name;
+  });
+});
+pp.controller('roomVote', function ($scope, $routeParams, api) {
+});
+pp.controller('roomParticipate', function ($scope, $routeParams, api) {
+  api.requestRoomDetails($routeParams.roomRef, function (info) {
+    $scope.roomName = info.name;
+    $scope.$apply();
+  });
+  api.onVotingRequest(function(conf) {
+    window.location.href = '#/vote/' + $routeParams.roomRef + '/' + conf.voteRef;
   });
 });
 pp.controller('activeParticipants', function ($scope, api) {
@@ -68,18 +85,22 @@ pp.controller('roomManager', function ($scope, api) {
 pp.controller('roomJoiner', function ($scope, $routeParams, api) {
   $scope.joinRoom = function () {
     api.joinRoom($routeParams.roomRef, $scope.join.name)
-      .onApprove(function (info) {
-        console.log('accept', info);
+      .onApprove(function () {
+        window.location.href = '#/participate/' + $routeParams.roomRef;
       })
-      .onReject(function (info) {
-        console.warn('reject', info);
+      .onReject(function () {
+        window.location.href = '#/rejected';
       });
+  };
+});
+pp.controller('requestVote', function ($scope, $routeParams, api) {
+  $scope.submit = function () {
+    api.requestVotes($scope.newVote.name);
   };
 });
 
 angular.module('components', [])
   .directive('qrcode', ['$document', function ( ) {
-    console.log('found');
     return {
       scope: {
         'url': '@'
@@ -88,7 +109,6 @@ angular.module('components', [])
       transclude: true,
       link: function ($scope, element) {
         function update() {
-          console.log('update', $scope.url);
           element.text('');
           jQuery(element[0]).qrcode($scope.url);
         }

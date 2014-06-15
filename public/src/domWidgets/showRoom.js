@@ -11,21 +11,6 @@ define(['jquery', 'apiClient', 'shared/voteProgress', 'shared/resultRenderer'], 
           var $div = $('<div/>').appendTo($elem);
           rr($div);
           $elem.find('h1').text('You\'re in!');
-          api.onVotingRequest(function (name, ref, roomRef) {
-            if (roomRef !== id) {
-              console.log('ignoring voting request for room', roomRef);
-              return;
-            }
-            $elem.find('h1').text('Request to vote on task: ' + name);
-            $div.html('');
-            $.each(nums, function (key, num) {
-              $div.append($('<button/>').text(num).click(function () {
-                api.vote(num, ref, roomRef);
-                $div.html('');
-              }));
-            });
-            $div.append(vp());
-          });
         }).onReject(function () {
           $elem.find('h1').text('Nope, you\'re not allowed.');
         });

@@ -1,6 +1,11 @@
 <h1>Hosting room {{roomName}}</h1>
 <p>Participants can join at <a href="{{joinUrl}}" target="_blank">{{joinUrl}}</a></p>
 <qrcode url="{{joinUrl}}"></qrcode>
+<form name="newVote" ng-submit="submit()" ng-controller="requestVote">
+  <h1>Request a vote</h1>
+  <input ng-model="newVote.name" placeholder="Task name" required/>
+  <input type="submit" value="Request"/>
+</form>
 <section>
   <h1>Pending Participants</h1>
   <ul ng-repeat="person in pendingPeople">
