@@ -1,4 +1,4 @@
-pp.service('api', [function () {
+angular.module('comms', []).service('api', [function () {
   var wsHost = 'ws://' + window.location.hostname + (window.config && window.config.port ? ':' + window.config.port : '');
   var socket = io.connect(wsHost, function () {
 

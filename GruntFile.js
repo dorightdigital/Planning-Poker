@@ -5,7 +5,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
       concurrent: {
         dev: {
-          tasks: ['watch:jstest', 'watch:css', 'nodemon:local'],
+          tasks: ['watch:js', 'watch:css', 'nodemon:local'],
           options: {
             logConcurrentOutput: true
           }
@@ -66,7 +66,13 @@ module.exports = function (grunt) {
       },
       jshint: {
         dev: {
-          src: ['GruntFile.js', 'test/**/*.spec.js', 'public/**/*.js', 'server/*.js', '!public/src/lib/qrcode.js']
+          src: ['GruntFile.js', 'test/**/*.spec.js', 'public/**/*.js', 'server/*.js']
+        }
+      },
+      concat: {
+        client: {
+          src: ['public/src/*.js'],
+          dest: 'public/build/app.js'
         }
       },
       watch: {
@@ -74,9 +80,9 @@ module.exports = function (grunt) {
           files: ['src/style.scss'],
           tasks: ['sass']
         },
-        jstest: {
-          files: ['test/**/*.spec.js', 'public/**/*.js', 'server/*.js'],
-          tasks: ['jasmine_node', 'jshint']
+        js: {
+          files: ['test/**/*.spec.js', 'public/src/**/*.js', 'server/*.js'],
+          tasks: ['jasmine_node', 'jshint', 'concat']
         }
       }
     }
@@ -85,6 +91,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-wiredep');
   grunt.loadNpmTasks('grunt-nodemon');
@@ -95,5 +102,5 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
-  grunt.registerTask('dev', ['install-dependencies:dev', 'jasmine_node', 'jshint', 'precompile', 'concurrent']);
+  grunt.registerTask('dev', ['install-dependencies:dev', 'concat', 'jasmine_node', 'jshint', 'precompile', 'concurrent']);
 };

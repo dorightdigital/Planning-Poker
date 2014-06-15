@@ -19,6 +19,7 @@
     "grunt-jasmine-node": "~0.2.1",
     "grunt-install-dependencies": "~0.2.0",
     "grunt-wiredep": "~1.8.0",
-    "grunt-contrib-jshint": "~0.10.0"
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-concat": "~0.4.0"
   }
 }
