@@ -88,8 +88,9 @@ angular.module('components', [])
       transclude: true,
       link: function ($scope, element) {
         function update() {
+          console.log('update', $scope.url);
           element.text('');
-          new QRCode(element[0], {text: $scope.url});
+          jQuery(element[0]).qrcode($scope.url);
         }
         update();
         $scope.$watch('url', function () {
