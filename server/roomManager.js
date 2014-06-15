@@ -58,6 +58,13 @@ exports.create = function (host, name) {
     user.voteRequired(ref, votingStatus.ref, votingStatus.name);
   }
 
+  function pushPendingParticipantsToHost() {
+    var list = _.map(potentialParticipants, function (user) {
+      return {name: user.getName(), ref: user.getRef()};
+    });
+    host.participantRequest(list, room);
+  }
+
   var room = rooms[ref] = {
     info: {
       name: name,
@@ -67,27 +74,31 @@ exports.create = function (host, name) {
     actions: {
       participantRequest: function (user) {
         potentialParticipants.push(user);
-        host.participantRequest(user, room, user.getName());
+        pushPendingParticipantsToHost();
       },
       participantAccept: function (user, acceptor) {
         if (acceptor === host) {
           user.accessGranted(ref);
           participants.push(user);
           pushParticipantListToAllUsers();
+          potentialParticipants = _.without(potentialParticipants, user);
+          pushPendingParticipantsToHost();
           if (votingStatus) {
-            requireVoteFromParticipant(user)
+            requireVoteFromParticipant(user);
             votingStatus.pending.push(user.getName());
             sendVotingStatusUpdate();
           }
         } else {
-          acceptor.sendError('You can\'t approve users unless you\'re the host.')
+          acceptor.sendError('You can\'t approve users unless you\'re the host.');
         }
       },
       participantReject: function (user, acceptor) {
         if (acceptor === host) {
           user.accessRefused(ref);
+          potentialParticipants = _.without(potentialParticipants, user);
+          pushPendingParticipantsToHost();
         } else {
-          acceptor.sendError('You can\'t reject users unless you\'re the host.')
+          acceptor.sendError('You can\'t reject users unless you\'re the host.');
         }
       },
       newVotingRound: function (name, user) {
@@ -111,7 +122,7 @@ exports.create = function (host, name) {
       voteReceived: function (user, vote) {
         var userName = user.getName();
         var voteAsString = ('' + vote);
-        votingStatus.answers[voteAsString] = votingStatus.answers[voteAsString] || []
+        votingStatus.answers[voteAsString] = votingStatus.answers[voteAsString] || [];
         votingStatus.answers[voteAsString].push(userName);
         votingStatus.voted.push(userName);
         votingStatus.pending = _.without(votingStatus.pending, userName);
@@ -122,12 +133,15 @@ exports.create = function (host, name) {
           _.each(potentialParticipants, function (part) {
             part.roomClosed(room);
           });
+          _.each(participants, function (part) {
+            part.roomClosed(room);
+          });
           delete rooms[room.info.ref];
         } else {
           participants = _.without(participants, user);
           pushParticipantListToAllUsers();
           if (votingStatus) {
-            votingStatus.pending = _.without(votingStatus.pending, user.getName())
+            votingStatus.pending = _.without(votingStatus.pending, user.getName());
             sendVotingStatusUpdate();
           }
         }

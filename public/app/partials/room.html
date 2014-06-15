@@ -1,0 +1,43 @@
+<div ng-switch="state">
+  <div ng-switch-when="in-room">
+    <h1>In room {{roomName}}</h1>
+
+    <p>Waiting for a vote</p>
+  </div>
+  <div ng-switch-when="closed">
+    <h1>The room "{{roomName}}" has been closed because the host has left</h1>
+  </div>
+  <div ng-switch-when="pending">
+    <h1>Waiting to see if you are allowed into {{roomName}}</h1>
+  </div>
+  <div ng-switch-when="rejected">
+    <h1>You've been rejected from {{roomName}}</h1>
+
+    <p>Refresh the page to retry.</p>
+  </div>
+  <div ng-switch-when="unan-result">
+    <h1>Everyone voted {{resultValue}}</h1>
+  </div>
+  <div ng-switch-when="mixed-result">
+    <h1>There was no concensus</h1>
+    <ul ng-repeat="result in resultList">
+      <li>{{result}}</li>
+    </ul>
+  </div>
+  <div ng-switch-when="voting">
+    <h1>Vote on {{taskName}}</h1>
+
+    <span ng-if="!voted" ng-repeat="value in [1,2,3,5,8,13,21]">
+      <button ng-click="voteFor(value)">{{value}}</button>
+    </span>
+    <voteprogress/>
+  </div>
+  <div ng-switch-default>
+    <form name="join" ng-submit="joinRoom(join.name)">
+      <input ng-model="join.name" placeholder="Your name" required/>
+      <input type="submit" value="Join"/>
+    </form>
+  </div>
+</div>
+
+<guestlist/>

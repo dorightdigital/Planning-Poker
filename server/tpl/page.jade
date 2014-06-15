@@ -1,11 +1,10 @@
 doctype HTML
-html
+html(ng-app="pp")
     head
         title= "Planning Poker"
+        script(src="/socket.io/socket.io.js")
         script.
-          window.config = {port: #{config.port}}
-        script(src='//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js', data-main='/src/domWidgets.js')
-        link(rel='stylesheet',href='/src/style.css')
-    body(data-dom-widget='pageTurner hostRoomWhenReady')
-        h1= "Start a planning poker room"
-        input(data-dom-widget='setupRoom', placeholder='Room Name')
+            window.config = {port: #{config.port}}
+        include ../js-dependencies.html
+        include ../app-includes.html
+    body(ng-view)

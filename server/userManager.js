@@ -7,8 +7,7 @@ function createUser(socket) {
   var ref = guid.raw();
   var name;
   var rooms = [];
-  var user;
-  return user = {
+  var user = {
     getRef: function () {
       return ref;
     },
@@ -18,8 +17,11 @@ function createUser(socket) {
     setName: function (newName) {
       name = newName;
     },
-    participantRequest: function (user, room, name) {
-      socket.emit('participant-request', { name : name, ref : user.getRef() })
+    participantRequest: function (participants, room) {
+      socket.emit('participant-request', {
+        roomRef: room.info.ref,
+        pendingParticipants: participants
+      });
     },
     roomReady: function (room) {
       rooms.push(room.info.ref);
@@ -37,7 +39,7 @@ function createUser(socket) {
       });
     },
     sendError: function (message) {
-      socket.emit('error', message);
+      socket.emit('server-error', message);
     },
     pushParticipantList: function (roomRef, list) {
       socket.emit('participant-update', {
@@ -75,6 +77,9 @@ function createUser(socket) {
         resultDetail: detail
       });
     },
+    roomDetails: function (roomInfo) {
+      socket.emit('room-details', roomInfo);
+    },
     disconnect: function () {
       require('underscore').each(rooms, function (value) {
         var room = require('./roomManager').get(value);
@@ -86,18 +91,20 @@ function createUser(socket) {
       });
     }
   };
+  return user;
 }
 
 exports.getFromRef = function (ref) {
   return usersByRef[ref];
-}
+};
 exports.getFromSocket = function (socket) {
   var id = socketsByIndex.indexOf(socket);
   if (id === -1) {
     var user = createUser(socket);
     id = socketsByIndex.length;
     socketsByIndex[id] = socket;
-    return usersByIndex[id] = usersByRef[user.getRef()] = user;
+    usersByIndex[id] = usersByRef[user.getRef()] = user;
+    return user;
   }
   return usersByIndex[id];
 };

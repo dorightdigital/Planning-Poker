@@ -1,20 +1,23 @@
-define('apiClient', ['/socket.io/socket.io.js'], function (io) {
+angular.module('comms', []).service('api', [function () {
   var wsHost = 'ws://' + window.location.hostname + (window.config && window.config.port ? ':' + window.config.port : '');
   var socket = io.connect(wsHost, function () {
 
   });
   var roomRef;
+
   function logEvent(name) {
     socket.on(name, function (conf) {
       console.log('Received', name, conf);
     });
   }
-  logEvent('participant-leave');
-  logEvent('room-close');
-  logEvent('vote-result');
-  return {
-    openRoom: function (name) {
+
+  logEvent('server-error');
+  var self = {
+    openRoom: function (name, callback) {
       socket.emit('open-room', {name: name});
+      if (callback) {
+        self.onRoomReady(callback);
+      }
     },
     onRoomReady: function (fn) {
       socket.on('room-ready', function (config) {
@@ -35,13 +38,13 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
           return output;
         }
       };
-    return output;
+      return output;
     },
     onJoinRequest: function (fn) {
       socket.on('participant-request', fn);
     },
     onError: function (fn) {
-      socket.on('error', fn);
+      socket.on('server-error', fn);
     },
     onRoomClose: function (fn) {
       socket.on('room-closed', fn);
@@ -66,7 +69,9 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
     },
     onVotingRequest: function (fn) {
       socket.on('vote-required', function (config) {
-        fn(config.taskName, config.taskRef, config.roomRef);
+        if (config.roomRef === roomRef) {
+          fn(config.taskName, config.taskRef);
+        }
       });
     },
     vote: function (vote, taskRef, roomRef) {
@@ -74,7 +79,7 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
         roomRef: roomRef,
         taskRef: taskRef,
         value: vote
-      })
+      });
     },
     onParticipantUpdate: function (fn) {
       socket.on('participant-update', function (data) {
@@ -111,6 +116,13 @@ define('apiClient', ['/socket.io/socket.io.js'], function (io) {
       socket.on('vote-result', function (data) {
         fn(data);
       });
+    },
+    requestRoomDetails: function (roomRef, fn) {
+      socket.on('room-details', function (data) {
+        fn(data);
+      });
+      socket.emit('ping-room-details', {roomRef: roomRef});
     }
-  }
-});
+  };
+  return  self;
+}]);
