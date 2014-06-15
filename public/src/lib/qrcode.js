@@ -606,7 +606,3 @@ var QRCode;
 	 */
 	QRCode.CorrectLevel = QRErrorCorrectLevel;
 })();
-
-define([], function () {
-  return QRCode;
-});

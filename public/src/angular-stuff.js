@@ -1,5 +1,6 @@
 var pp = angular.module('pp', [
-  'ngRoute'
+  'ngRoute',
+  'components'
 ]);
 
 pp.config(function ($routeProvider) {
@@ -23,7 +24,7 @@ pp.controller('roomParticipate', function ($scope, $routeParams, api) {
   });
 });
 pp.controller('activeParticipants', function ($scope, api) {
-  api.onParticipantUpdate(function(participantList) {
+  api.onParticipantUpdate(function (participantList) {
     $scope.guests = participantList;
     $scope.$apply();
   });
@@ -75,3 +76,25 @@ pp.controller('roomJoiner', function ($scope, $routeParams, api) {
       });
   };
 });
+
+angular.module('components', [])
+  .directive('qrcode', ['$document', function ( ) {
+    console.log('found');
+    return {
+      scope: {
+        'url': '@'
+      },
+      restrict: 'E',
+      transclude: true,
+      link: function ($scope, element) {
+        function update() {
+          element.text('');
+          new QRCode(element[0], {text: $scope.url});
+        }
+        update();
+        $scope.$watch('url', function () {
+          update();
+        });
+      }
+    };
+  }]);
