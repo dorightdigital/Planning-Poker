@@ -1,5 +1,5 @@
 angular.module('sharedComponents', [])
-  .directive('guestlist', function (api) {
+  .directive('guestlist', function () {
     return {
       restrict: 'E',
       templateUrl: 'app/partials/guestList.html',
@@ -8,6 +8,26 @@ angular.module('sharedComponents', [])
           $scope.guests = participantList;
           $scope.$apply();
         });
+        api.onRoomClose(function () {
+          $scope.guests = [];
+          $scope.$apply();
+        });
+      }
+    };
+  })
+  .directive('voteprogress', function () {
+    return {
+      restrict: 'E',
+      controller: function ($element, api) {
+        var progress = document.createElement('progress');
+        api.onVotingProgressUpdate(function (percent) {
+          progress.value=percent/100;
+        });
+        api.onRoomClose(function () {
+          $element.text('');
+        });
+        $element.text('');
+        $element.append(progress);
       }
     };
   });

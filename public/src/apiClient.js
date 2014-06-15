@@ -4,14 +4,14 @@ angular.module('comms', []).service('api', [function () {
 
   });
   var roomRef;
+
   function logEvent(name) {
     socket.on(name, function (conf) {
       console.log('Received', name, conf);
     });
   }
-  logEvent('participant-leave');
-  logEvent('room-close');
-  logEvent('vote-result');
+
+  logEvent('server-error');
   var self = {
     openRoom: function (name, callback) {
       socket.emit('open-room', {name: name});
@@ -69,7 +69,9 @@ angular.module('comms', []).service('api', [function () {
     },
     onVotingRequest: function (fn) {
       socket.on('vote-required', function (config) {
-        fn(config.taskName, config.taskRef, config.roomRef);
+        if (config.roomRef === roomRef) {
+          fn(config.taskName, config.taskRef);
+        }
       });
     },
     vote: function (vote, taskRef, roomRef) {

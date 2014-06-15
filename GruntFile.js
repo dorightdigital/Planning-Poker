@@ -14,7 +14,7 @@ module.exports = function (grunt) {
       sass: {
         dist: {
           files: {
-            'public/src/style.css': 'src/style.scss'
+            'public/build/style.css': 'src/style.scss'
           }
         }
       },
@@ -66,12 +66,12 @@ module.exports = function (grunt) {
       },
       jshint: {
         dev: {
-          src: ['GruntFile.js', 'test/**/*.spec.js', 'public/**/*.js', 'server/*.js']
+          src: ['GruntFile.js', 'test/**/*.spec.js', 'public/src/**/*.js', 'server/*.js']
         }
       },
       concat: {
         client: {
-          src: ['public/src/*.js'],
+          src: ['public/src/**/*.js'],
           dest: 'public/build/app.js'
         }
       },
@@ -97,10 +97,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.loadNpmTasks('grunt-install-dependencies');
-  grunt.registerTask('precompile', ['sass', 'wiredep']);
+
+  grunt.registerTask('precompile', ['sass', 'wiredep', 'concat']);
   grunt.registerTask('test', ['jasmine_node', 'jshint']);
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
-  grunt.registerTask('dev', ['install-dependencies:dev', 'concat', 'jasmine_node', 'jshint', 'precompile', 'concurrent']);
+  grunt.registerTask('dev', ['install-dependencies:dev', 'jasmine_node', 'jshint', 'precompile', 'concurrent']);
 };

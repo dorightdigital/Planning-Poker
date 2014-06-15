@@ -1,12 +1,31 @@
 <h1>Hosting room {{roomName}}</h1>
 <p>Participants can join at <a href="{{joinUrl}}" target="_blank">{{joinUrl}}</a></p>
-<qrcode url="{{joinUrl}}"></qrcode>
-<form name="newVote" ng-submit="submit()" ng-controller="requestVote">
+<form ng-if="allowVote" name="newVote" ng-submit="submit()" ng-controller="requestVote">
+  <div ng-switch="result">
+    <div ng-switch-when="unan">
+      <h1>Everyone voted {{resultValue}}</h1>
+    </div>
+    <div ng-switch-when="mixed">
+      <h1>Not everyone agreed:</h1>
+      <ul ng-repeat="result in resultList">
+        <li>{{result}}</li>
+      </ul>
+    </div>
+    <div ng-switch-when="pending">
+      <voteprogress/>
+      <div ng-controller="fullVotingStatus">
+        <h3>Voted:</h3>
+        <ul ng-repeat="name in voters">
+          <li>{{name}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
   <h1>Request a vote</h1>
   <input ng-model="newVote.name" placeholder="Task name" required/>
   <input type="submit" value="Request"/>
 </form>
-<section>
+<section ng-if="pendingPeople.length > 0">
   <h1>Pending Participants</h1>
   <ul ng-repeat="person in pendingPeople">
     <li>
@@ -18,3 +37,4 @@
   </ul>
 </section>
 <guestlist/>
+<qrcode url="{{joinUrl}}"></qrcode>
