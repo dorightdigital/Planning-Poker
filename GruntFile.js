@@ -71,7 +71,7 @@ module.exports = function (grunt) {
       },
       concat: {
         client: {
-          src: ['public/src/**/*.js'],
+          src: ['public/app/main.js', 'public/app/**/*.js'],
           dest: 'public/build/app.js'
         }
       },

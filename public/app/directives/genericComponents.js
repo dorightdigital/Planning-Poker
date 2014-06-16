@@ -1,4 +1,4 @@
-angular.module('genericComponents', [])
+angular.module('pp')
   .directive('qrcode', function () {
     return {
       scope: {
