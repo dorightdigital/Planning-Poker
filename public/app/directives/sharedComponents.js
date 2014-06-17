@@ -2,7 +2,7 @@ angular.module('sharedComponents', [])
   .directive('guestlist', function () {
     return {
       restrict: 'E',
-      templateUrl: 'app/partials/guestList.html',
+      templateUrl: 'app/views/guestList.html',
       controller: function ($scope, api) {
         api.onParticipantUpdate(function (participantList) {
           $scope.guests = participantList;

@@ -7,15 +7,15 @@ angular.module('pp', [
 ]).config(function ($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'app/partials/createRoom.html',
+      templateUrl: 'app/views/createRoom.html',
       controller: 'roomManager'
     }).when('/host/:roomRef', {
-      templateUrl: 'app/partials/hostRoom.html',
+      templateUrl: 'app/views/hostRoom.html',
       controller: 'roomHost'
     }).when('/participate/:roomRef', {
-      templateUrl: 'app/partials/room.html',
+      templateUrl: 'app/views/room.html',
       controller: 'roomParticipate'
     }).otherwise({
-      templateUrl: 'app/partials/notFound.html'
+      templateUrl: 'app/views/notFound.html'
     });
 });
