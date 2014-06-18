@@ -64,8 +64,15 @@ module.exports = function (grunt) {
       },
       jasmine_node: {
         server: ['test/server'],
-        client: ['test/client'],
         integration: ['test/integration']
+      },
+      jasmine: {
+        client: {
+          src: 'public/build/app.js',
+          options: {
+            specs: ['test/client/*.spec.js']
+          }
+        }
       },
       jshint: {
         dev: {
@@ -75,7 +82,6 @@ module.exports = function (grunt) {
       concat: {
         client: {
           src: [
-            'public/hack.js',
             'bower_components/jquery/jquery.js',
             'bower_components/angular/angular.js',
             'bower_components/angular-route/angular-route.js',
@@ -93,19 +99,19 @@ module.exports = function (grunt) {
         },
         jsclient: {
           files: ['public/**/*.js'],
-          tasks: ['concat', 'jshint', 'jasmine_node:client', 'jasmine_node:integration']
+          tasks: ['concat', 'jshint', 'jasmine:client', 'jasmine:integration']
         },
         jsclienttest: {
           files: ['test/client/**/*.spec.js'],
-          tasks: ['jasmine_node:client']
+          tasks: ['jasmine:client']
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
-          tasks: ['jasmine_node:server', 'jasmine_node:integration']
+          tasks: ['jasmine_node:server', 'jasmine:integration']
         },
         integrationtest: {
           files: ['test/integration/**/*.spec.js'],
-          tasks: ['jasmine_node:integration']
+          tasks: ['jasmine:integration']
         }
       }
     }
@@ -118,12 +124,14 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-install-dependencies');
 
   grunt.registerTask('precompile', ['sass', 'concat']);
-  grunt.registerTask('test', ['jasmine_node:server', 'jasmine_node:client', 'jshint']);
+  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint']);
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
-  grunt.registerTask('dev', ['install-dependencies:dev', 'jasmine_node:server', 'jasmine_node:client', 'jshint', 'precompile', 'concurrent:dev']);
-};
+  grunt.registerTask('dev', ['install-dependencies:dev', 'build', 'jasmine_node:server', 'jasmine:client', 'jshint', 'precompile', 'concurrent:dev']);
+}
+;
