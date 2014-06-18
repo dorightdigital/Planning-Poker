@@ -33,11 +33,11 @@ angular.module('hostControllers', []).controller('roomHost', function ($scope, $
     api.rejectParticipant(ref);
   };
 }).controller('roomManager', function ($scope, api) {
-    console.log('scope', $scope);
     $scope.createRoom = function () {
       var roomName = $scope.cr.roomName;
       api.roomName = roomName;
       api.openRoom(roomName, function (room) {
+        console.info('room Created', room);
         window.location.href = '#/host/' + room.ref;
       });
     };
@@ -64,7 +64,6 @@ angular.module('hostControllers', []).controller('roomHost', function ($scope, $
     });
   }).controller('fullVotingStatus', function ($scope, api) {
     api.onFullVotingStatus(function (pending, voted) {
-      console.log(arguments);
       $scope.voters = voted;
       $scope.$apply();
     });

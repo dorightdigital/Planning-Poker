@@ -33,6 +33,7 @@
     <voteprogress/>
   </div>
   <div ng-switch-default>
+    <h1>Join room {{roomName}}</h1>
     <form name="join" ng-submit="joinRoom(join.name)">
       <input ng-model="join.name" placeholder="Your name" required/>
       <input type="submit" value="Join"/>

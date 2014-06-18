@@ -5,6 +5,5 @@ html(ng-app="pp")
         script(src="/socket.io/socket.io.js")
         script.
             window.config = {port: #{config.port}}
-        include ../js-dependencies.html
         include ../app-includes.html
     body(ng-view)

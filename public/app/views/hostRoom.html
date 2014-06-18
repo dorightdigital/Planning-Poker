@@ -1,5 +1,5 @@
 <h1>Hosting room {{roomName}}</h1>
-<p>Participants can join at <a href="{{joinUrl}}" target="_blank">{{joinUrl}}</a></p>
+<p>Participants can join at <a href="{{joinUrl}}" id="joinLink" target="_blank">{{joinUrl}}</a></p>
 <form ng-if="allowVote" name="newVote" ng-submit="submit()" ng-controller="requestVote">
   <div ng-switch="result">
     <div ng-switch-when="unan">
