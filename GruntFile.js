@@ -20,7 +20,7 @@ module.exports = function (grunt) {
       sass: {
         dist: {
           files: {
-            'public/build/style.css': 'src/style.scss'
+            'build/style.css': 'src/style.scss'
           }
         }
       },
@@ -68,7 +68,7 @@ module.exports = function (grunt) {
       },
       jasmine: {
         client: {
-          src: 'public/build/app.js',
+          src: 'build/app.js',
           options: {
             specs: ['test/client/*.spec.js']
           }
@@ -86,10 +86,10 @@ module.exports = function (grunt) {
             'bower_components/angular/angular.js',
             'bower_components/angular-route/angular-route.js',
             'bower_components/jquery-qrcode/jquery.qrcode.min.js',
-            'public/app/main.js',
-            'public/app/**/*.js'
+            'app/main.js',
+            'app/**/*.js'
           ],
-          dest: 'public/build/app.js'
+          dest: 'build/app.js'
         }
       },
       watch: {

@@ -5,5 +5,9 @@ html(ng-app="pp")
         script(src="/socket.io/socket.io.js")
         script.
             window.config = {port: #{config.port}}
-        include ../app-includes.html
+        link(rel='stylesheet', href='/style.css')
+        script(src='/app.js')
+
     body(ng-view)
+        h1= "Planning Poker by Do Right Digital"
+        p= "An interactive game of planning poker designed for remote teams."
