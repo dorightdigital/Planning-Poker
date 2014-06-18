@@ -30,12 +30,6 @@ describe('Room Manager', function () {
     spyOn(require('guid'), 'raw').andReturn(fakeGuid);
     expect(roomManager.create(help.generateUser(), 'Def').info.ref).toEqual(fakeGuid);
   });
-  it('should lookup room URL', function () {
-    spyOn(require('../../server/urls'), 'forRoom').andReturn('something');
-    var id = roomManager.create(help.generateUser(), 'Def').info.ref;
-    expect(require('../../server/urls').forRoom).toHaveBeenCalledWith(id);
-    expect(roomManager.create(help.generateUser(), 'Def').info.url).toBe('something');
-  });
   it('should show existence status', function () {
     var fakeGuid = 'my-guid2';
     spyOn(require('guid'), 'raw').andReturn(fakeGuid);

@@ -1,6 +1,5 @@
 var guid = require('guid');
 var _ = require('underscore');
-var url = require('./urls');
 var rooms = {};
 
 exports.get = function (id) {
@@ -68,8 +67,7 @@ exports.create = function (host, name) {
   var room = rooms[ref] = {
     info: {
       name: name,
-      ref: ref,
-      url: url.forRoom(ref)
+      ref: ref
     },
     actions: {
       participantRequest: function (user) {

@@ -9,6 +9,8 @@ app.engine('jade', require('jade').__express);
 app.use(express.static(__dirname + '/../build'));
 app.use('/bower_components', express.static(__dirname + '/../bower_components'));
 app.use('/app/views', express.static(__dirname + '/../app/views'));
-require('./urls').init(app, config);
+app.get("/", function (req, res) {
+  res.render("page", {config: config});
+});
 require('./serverApi').init(app.listen(config.port));
-console.log('started server on port ', config.port);
+console.info('started server on port ', config.port);
