@@ -1,4 +1,4 @@
-angular.module('sharedComponents', [])
+angular.module('pp')
   .directive('guestlist', function () {
     return {
       restrict: 'E',

@@ -1,4 +1,4 @@
-angular.module('participantControllers', []).controller('roomParticipate', function ($scope, $routeParams, api) {
+angular.module('pp').controller('roomParticipate', function ($scope, $routeParams, api) {
 
   var roomRef = $routeParams.roomRef;
   var currentVote;

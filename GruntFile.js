@@ -99,7 +99,7 @@ module.exports = function (grunt) {
         },
         jsclient: {
           files: ['public/**/*.js'],
-          tasks: ['concat', 'jshint', 'jasmine:client', 'jasmine:integration']
+          tasks: ['concat', 'jshint', 'jasmine:client', 'jasmine_node:integration']
         },
         jsclienttest: {
           files: ['test/client/**/*.spec.js'],
@@ -107,11 +107,11 @@ module.exports = function (grunt) {
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
-          tasks: ['jasmine_node:server', 'jasmine:integration']
+          tasks: ['jasmine_node:server', 'jasmine_node:integration']
         },
         integrationtest: {
           files: ['test/integration/**/*.spec.js'],
-          tasks: ['jasmine:integration']
+          tasks: ['jasmine_node:integration']
         }
       }
     }

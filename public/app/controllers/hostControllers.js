@@ -1,4 +1,4 @@
-angular.module('hostControllers', []).controller('roomHost', function ($scope, $routeParams, api) {
+angular.module('pp').controller('roomHost', function ($scope, $routeParams, api) {
   $scope.activePeople = {};
   var portString = window.location.port === '' ? '' : (':' + window.location.port);
   var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/participate/' + $routeParams.roomRef;

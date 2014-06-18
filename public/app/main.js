@@ -1,9 +1,5 @@
 angular.module('pp', [
-  'ngRoute',
-  'participantControllers',
-  'hostControllers',
-  'sharedComponents',
-  'comms'
+  'ngRoute'
 ]).config(function ($routeProvider) {
   $routeProvider
     .when('/', {
