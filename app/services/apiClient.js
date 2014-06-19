@@ -1,5 +1,5 @@
 angular.module('pp').service('api', [function () {
-  var wsHost = 'ws://' + window.location.hostname + (window.config && window.config.port ? ':' + window.config.port : '');
+  var wsHost = 'ws://' + window.location.hostname;
   var socket = io.connect(wsHost, function () {
 
   });
