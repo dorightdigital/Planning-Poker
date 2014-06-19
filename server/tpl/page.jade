@@ -1,13 +1,19 @@
 doctype HTML
-html(ng-app="pp")
+html(ng-app='pp')
     head
-        title= "Planning Poker"
-        script(src="/socket.io/socket.io.js")
+        title= 'Planning Poker'
+        script(src='/socket.io/socket.io.js')
         script.
             window.config = {port: #{config.port}}
+        meta(name='viewport', content='initial-scale=1')
         link(rel='stylesheet', href='/style.css')
         script(src='/app.js')
 
-    body(ng-view)
-        h1= "Planning Poker by Do Right Digital"
-        p= "An interactive game of planning poker designed for remote teams."
+    body
+        header
+            a(href='http://dorightdigital.com/')
+                img(src='http://dorightdigital.com/sites/default/files/DRD_Website.jpg', alt='Do Right Digital', target="_blank")
+            h1= 'Planning Poker'
+            p= 'An interactive game of planning poker designed for remote teams.'
+        div.main(ng-view)
+            Loading
