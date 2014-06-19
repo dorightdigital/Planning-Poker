@@ -7,7 +7,8 @@
     "express": "latest",
     "jade": "latest",
     "guid": "0.0.12",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "markdown-js": "0.0.3"
   },
   "author": "developer",
   "devDependencies": {

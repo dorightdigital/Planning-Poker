@@ -1,19 +1,25 @@
-* {
-	font-size: 25px;
+@mixin main-section() {
+	text-align: center;
+	background: #1a7939;
+	border-radius: 20px;
+	overflow: hidden;
+	margin: 20px;
+	padding: 20px;
 }
 
 html,
 body {
-	background: #456;
+	background: black;
 	color: #fff;
 	font-family: sans-serif;
+	font-size: 25px;
 	margin: 0;
 	padding: 0;
 }
 
 :link,
 :visited {
-	color: #999;
+	color: inherit;
 }
 
 header {
@@ -44,13 +50,7 @@ header {
 }
 
 .main {
-	text-align: center;
-	background: #579;
-	border-radius: 20px;
-	overflow: hidden;
-	margin: 20px;
-	padding: 20px;
-
+	@include main-section();
 	h1 {
 		font-size: 30px;
 	}
@@ -85,5 +85,14 @@ header {
 	section:first-child:last-child {
 		width: auto;
 		margin: 0;
+	}
+}
+
+footer {
+	@include main-section();
+	font-size: 14px;
+
+	a{
+		text-decoration: none;
 	}
 }
