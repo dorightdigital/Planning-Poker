@@ -21,6 +21,7 @@
   "dependencies": {
     "angular": "~1.2.18",
     "angular-route": "~1.2.18",
-    "jquery-qrcode": "git://github.com/matcarey/jquery-qrcode.git"
+    "jquery-qrcode": "git://github.com/matcarey/jquery-qrcode.git",
+    "normalize.css": "~3.0.1"
   }
 }
