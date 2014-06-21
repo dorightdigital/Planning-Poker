@@ -136,11 +136,16 @@ exports.create = function (host, name) {
           });
           delete rooms[room.info.ref];
         } else {
-          participants = _.without(participants, user);
-          pushParticipantListToAllUsers();
-          if (votingStatus) {
-            votingStatus.pending = _.without(votingStatus.pending, user.getName());
-            sendVotingStatusUpdate();
+          if (_.contains(participants, user)) {
+            participants = _.without(participants, user);
+            pushParticipantListToAllUsers();
+            if (votingStatus) {
+              votingStatus.pending = _.without(votingStatus.pending, user.getName());
+              sendVotingStatusUpdate();
+            }
+          } else {
+            potentialParticipants = _.without(potentialParticipants, user);
+            pushPendingParticipantsToHost();
           }
         }
       }

@@ -71,13 +71,19 @@ describe('User Manager', function () {
       taskName: 'task-name'
     });
   });
-  it('should leave rooms participated in on disconnect', function () {
-    guest.accessGranted(room.info.ref);
+  it('should leave room participated in on disconnect', function () {
+    guest.setCurrentRoomRef(room.info.ref);
     spyOn(room.actions, 'removeUser');
     guest.disconnect();
     expect(room.actions.removeUser).toHaveBeenCalledWith(guest);
   });
-  it('should leave hosted rooms on disconnect', function () {
+  it('should leave room participated in on joining another room', function () {
+    guest.setCurrentRoomRef(room.info.ref);
+    spyOn(room.actions, 'removeUser');
+    guest.setCurrentRoomRef('a');
+    expect(room.actions.removeUser).toHaveBeenCalledWith(guest);
+  });
+  it('should leave hosted room on disconnect', function () {
     spyOn(room.actions, 'removeUser');
     host.disconnect();
     expect(room.actions.removeUser).toHaveBeenCalledWith(host);

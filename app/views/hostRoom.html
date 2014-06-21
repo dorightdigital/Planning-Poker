@@ -31,12 +31,11 @@
     <input type="submit" value="Request"/>
   </form>
 </section>
-<section ng-if="pendingPeople.length > 0">
+<section ng-if="pendingPeople.length > 0" class="pendingPeople">
   <h1>Pending Participants</h1>
   <ul ng-repeat="person in pendingPeople">
     <li>
-      {{person.name}}
-      |
+      <span class="name">{{person.name}}</span>
       <button ng-click="accept(person.ref)">Accept</button>
       <button ng-click="reject(person.ref)">Reject</button>
     </li>

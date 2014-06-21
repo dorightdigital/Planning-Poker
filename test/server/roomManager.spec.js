@@ -65,6 +65,14 @@ describe('Room Manager', function () {
         expect(host.participantRequest).toHaveBeenCalledWith(jasmine.any(Array), room);
         expect(potentialParticipantList()).toEqual([{name: 'abc',ref: guest.getRef()}]);
       });
+      it('should inform host when user disconnects after requesting to join room', function () {
+        spyOn(host, 'participantRequest');
+        guest.setName('abc');
+        room.actions.participantRequest(guest);
+        room.actions.removeUser(guest);
+        expect(host.participantRequest).toHaveBeenCalledWith(jasmine.any(Array), room);
+        expect(potentialParticipantList()).toEqual([]);
+      });
       it('should update participant requests on acceptance', function () {
         spyOn(host, 'participantRequest');
         guest.setName('abc');

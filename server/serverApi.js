@@ -31,6 +31,7 @@ exports.init = function (server) {
       withSpecifiedRoom(config.ref, function (room) {
         room.actions.participantRequest(user);
       });
+      user.setCurrentRoomRef(config.ref);
     });
     socket.on('open-room', function (config) {
       rooms.create(user, config.name);

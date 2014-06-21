@@ -6,7 +6,7 @@ var guid = require('guid');
 function createUser(socket) {
   var ref = guid.raw();
   var name;
-  var rooms = [];
+  var currentRoomRef;
   var user = {
     getRef: function () {
       return ref;
@@ -24,11 +24,16 @@ function createUser(socket) {
       });
     },
     roomReady: function (room) {
-      rooms.push(room.info.ref);
+      currentRoomRef = room.info.ref;
       socket.emit('room-ready', room.info);
     },
+    setCurrentRoomRef: function (roomRef) {
+      if (currentRoomRef) {
+        user.disconnect();
+      }
+      currentRoomRef = roomRef;
+    },
     accessGranted: function (roomRef) {
-      rooms.push(roomRef);
       socket.emit('participant-approve', {
         roomRef: roomRef
       });
@@ -81,14 +86,12 @@ function createUser(socket) {
       socket.emit('room-details', roomInfo);
     },
     disconnect: function () {
-      require('underscore').each(rooms, function (value) {
-        var room = require('./roomManager').get(value);
-        if (room) {
-          room.actions.removeUser(user);
-        } else {
-          console.warn('no room found while disconnecting');
-        }
-      });
+      var roomObj = require('./roomManager').get(currentRoomRef);
+      if (roomObj) {
+        roomObj.actions.removeUser(user);
+      } else {
+        console.warn('no room found while disconnecting');
+      }
     }
   };
   return user;

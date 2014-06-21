@@ -69,6 +69,11 @@ describe('Server API', function () {
       fireEvent('join-room', {ref: room.info.ref, name: 'def'});
       expect(user.getName()).toBe('def');
     });
+    it('should set user\'s current room', function () {
+      spyOn(user, 'setCurrentRoomRef');
+      fireEvent('join-room', {ref: room.info.ref, name: 'def'});
+      expect(user.setCurrentRoomRef).toHaveBeenCalledWith(room.info.ref);
+    });
     it('should publish error if no room found while joining', function () {
       fireEvent('join-room', {ref: 'not-findable', name: 'abc'});
       expect(socket.emit).toHaveBeenCalledWith('server-error', 'Room not found "not-findable"');
