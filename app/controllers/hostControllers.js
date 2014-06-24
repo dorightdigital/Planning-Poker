@@ -1,5 +1,5 @@
 angular.module('pp')
-  .controller('roomHost',function ($scope, $routeParams, api) {
+  .controller('roomHost',function ($scope, $routeParams, api, tracker) {
     $scope.activePeople = {};
     var portString = window.location.port === '' ? '' : (':' + window.location.port);
     var fullRoomUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/participate/' + $routeParams.roomRef;
@@ -22,6 +22,7 @@ angular.module('pp')
       if (alreadyResponded.indexOf(ref) !== -1) {
         return;
       }
+      tracker.trackEvent('participant-approved');
       $scope.allowVote = true;
       alreadyResponded.push(ref);
       api.acceptParticipant(ref);
@@ -30,6 +31,7 @@ angular.module('pp')
       if (alreadyResponded.indexOf(ref) !== -1) {
         return;
       }
+      tracker.trackEvent('participant-rejected');
       alreadyResponded.push(ref);
       api.rejectParticipant(ref);
     };
