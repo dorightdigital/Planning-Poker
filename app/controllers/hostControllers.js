@@ -41,11 +41,13 @@ angular.module('pp')
         window.location.href = '#/host/' + room.ref;
       });
     };
-  }).controller('requestVote',function ($scope, $routeParams, api) {
+  }).controller('requestVote',function ($scope, $routeParams, api, tracker) {
     $scope.submit = function () {
+      var voteName = $scope.newVote.name;
+      tracker.trackEvent('request-vote', voteName)
       $scope.voteInProgress = true;
       $scope.result = 'pending';
-      api.requestVotes($scope.newVote.name);
+      api.requestVotes(voteName);
     };
     api.onUnanimousResult(function (value) {
       $scope.voteInProgress = false;

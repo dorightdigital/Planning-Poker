@@ -1,8 +1,7 @@
 describe('Room Creator', function () {
-  var testScope, api, ga;
+  var ga;
 
   beforeEach(function () {
-    testScope = this;
     module('pp');
     ga = jasmine.createSpyObj('GA', ['trackEvent']);
   });
