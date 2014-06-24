@@ -1,4 +1,4 @@
-angular.module('pp').controller('roomParticipate', function ($scope, $routeParams, api) {
+angular.module('pp').controller('roomParticipate', function ($scope, $routeParams, api, tracker) {
 
   var roomRef = $routeParams.roomRef;
   var currentVote;
@@ -8,6 +8,7 @@ angular.module('pp').controller('roomParticipate', function ($scope, $routeParam
   }
 
   $scope.joinRoom = function (name) {
+    tracker.trackEvent('join-room', name);
     setState('pending');
     api.joinRoom(roomRef, name)
       .onApprove(function () {
@@ -23,6 +24,7 @@ angular.module('pp').controller('roomParticipate', function ($scope, $routeParam
     if (votedFor.indexOf(currentVote) !== -1) {
       return;
     }
+    tracker.trackEvent('vote', value);
     votedFor.push(currentVote);
     api.vote(value, currentVote, roomRef);
     $scope.voted = true;
