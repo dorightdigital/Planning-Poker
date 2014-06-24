@@ -13,6 +13,12 @@ to the root of the project and run:
 npm install && grunt dev
 ````
 
+If you just want to make sure your version works you can run:
+
+````sh
+npm install && grunt test
+````
+
 New Features & Bugs
 ---
 

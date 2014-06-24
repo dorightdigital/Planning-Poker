@@ -1,7 +1,19 @@
 module.exports = function (grunt) {
+  var  _ = require('underscore');
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json')
   });
+  var srcFiles = [
+    'bower_components/jquery/jquery.js',
+    'bower_components/angular/angular.js',
+    'bower_components/angular-route/angular-route.js',
+    'bower_components/jquery-qrcode/jquery.qrcode.min.js',
+    'app/main.js',
+    'app/**/*.js'
+  ];
+  var testSrcFiles = _.clone(srcFiles);
+  testSrcFiles.push('bower_components/angular-mocks/angular-mocks.js');
+  testSrcFiles.push('test/client/helpers/*.js');
   grunt.initConfig({
       concurrent: {
         dev: {
@@ -70,7 +82,7 @@ module.exports = function (grunt) {
       },
       jasmine: {
         client: {
-          src: 'build/app.js',
+          src: testSrcFiles,
           options: {
             specs: ['test/client/*.spec.js']
           }
@@ -83,14 +95,7 @@ module.exports = function (grunt) {
       },
       concat: {
         client: {
-          src: [
-            'bower_components/jquery/jquery.js',
-            'bower_components/angular/angular.js',
-            'bower_components/angular-route/angular-route.js',
-            'bower_components/jquery-qrcode/jquery.qrcode.min.js',
-            'app/main.js',
-            'app/**/*.js'
-          ],
+          src: srcFiles,
           dest: 'build/app.js'
         }
       },
@@ -100,12 +105,12 @@ module.exports = function (grunt) {
           tasks: ['sass']
         },
         jsclient: {
-          files: ['public/**/*.js'],
+          files: ['app/**/*.js'],
           tasks: ['concat', 'jshint', 'jasmine:client', 'jasmine_node:integration']
         },
         jsclienttest: {
           files: ['test/client/**/*.spec.js'],
-          tasks: ['jasmine:client']
+          tasks: ['jshint', 'jasmine:client']
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
