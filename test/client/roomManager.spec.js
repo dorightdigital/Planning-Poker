@@ -1,15 +1,16 @@
 describe('Room Creator', function () {
   var testScope, api, ga;
   function openRoomWithName(roomName) {
-    help.loadController('roomManager', {
+    var controller = help.loadController('roomManager', {
       api: api,
-      tracker: ga,
       scope: {
         cr: {
           roomName: roomName
         }
       }
-    }).$scope.createRoom();
+    });
+    controller.$scope.createRoom();
+    return controller;
   }
 
   beforeEach(function () {
@@ -17,7 +18,6 @@ describe('Room Creator', function () {
 
     module('pp');
     api = help.createMockApi();
-    ga = jasmine.createSpyObj('GA', ['trackEvent']);
   });
 
   it('should request to open a room', function () {
@@ -26,8 +26,8 @@ describe('Room Creator', function () {
   });
 
   it('should track room opening', function () {
-    openRoomWithName('def');
-    expect(ga.trackEvent).toHaveBeenCalledWith('create-room', 'def');
+    var controller = openRoomWithName('def');
+    expect(controller.tracker.trackEvent).toHaveBeenCalledWith('create-room', 'def');
   });
 
   it('should remove loading flag when API is ready', function () {
@@ -37,8 +37,7 @@ describe('Room Creator', function () {
       connectCallback = fn;
     };
     help.loadController('roomManager', {
-      api: api,
-      tracker: ga
+      api: api
     });
     expect(rootElem.hasClass('loading')).toBeTruthy();
     connectCallback();

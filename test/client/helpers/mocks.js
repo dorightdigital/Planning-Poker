@@ -10,6 +10,7 @@ var io = {
     };
   }
 };
+
 help.createMockApi = function () {
   return jasmine.createSpyObj('api', [
     'onConnect',
@@ -21,4 +22,14 @@ help.createMockApi = function () {
     'mockApi',
     'openRoom'
   ]);
+};
+
+help.createMockGa = function () {
+  return jasmine.createSpyObj('ga', ['trackEvent']);
+};
+
+help.setupDefaultParams = function () {
+  return {
+    tracker: help.createMockGa()
+  };
 };

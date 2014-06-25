@@ -1,23 +1,18 @@
 describe('Room Creator', function () {
-  var ga;
-
   beforeEach(function () {
     module('pp');
-    ga = jasmine.createSpyObj('GA', ['trackEvent']);
   });
 
-  it('should track request to join room', function () {
-    help.loadController('roomHost', {
-      tracker: ga
-    }).$scope.accept('userRef');
-    expect(ga.trackEvent).toHaveBeenCalledWith('participant-approved');
+  it('should track participant approval', function () {
+    var controller = help.loadController('roomHost');
+    controller.$scope.accept('userRef');
+    expect(controller.tracker.trackEvent).toHaveBeenCalledWith('participant-approved');
   });
 
-  it('should track request to join room', function () {
-    help.loadController('roomHost', {
-      tracker: ga
-    }).$scope.reject('userRef');
-    expect(ga.trackEvent).toHaveBeenCalledWith('participant-rejected');
+  it('should track participant rejection', function () {
+    var controller = help.loadController('roomHost');
+    controller.$scope.reject('userRef');
+    expect(controller.tracker.trackEvent).toHaveBeenCalledWith('participant-rejected');
   });
 
 });
