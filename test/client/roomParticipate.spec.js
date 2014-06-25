@@ -21,4 +21,21 @@ describe('Room Creator', function () {
     this.scope.voteFor('3');
     expect(ga.trackEvent).toHaveBeenCalledWith('vote', '3');
   });
+
+  it('should remove loading flag when API is ready', function () {
+    var connectCallback;
+    var rootElem = $('<div ng-app class=loading/>').appendTo('body');
+    var api = jasmine.createSpyObj('api', ['onConnect', 'requestRoomDetails', 'onVotingRequest', 'onRoomClose', 'onUnanimousResult', 'onMixedResult']);
+    api.onConnect = function (fn) {
+      connectCallback = fn;
+    };
+    help.loadController('roomParticipate', {
+      tracker: ga,
+      api: api
+    });
+    expect(rootElem.hasClass('loading')).toBeTruthy();
+    connectCallback();
+    expect(rootElem.hasClass('loading')).toBeFalsy();
+    rootElem.remove();
+  });
 });

@@ -1,9 +1,8 @@
 angular.module('pp').service('api', [function () {
   var wsHost = 'ws://' + window.location.hostname;
-  var socket = io.connect(wsHost, function () {
-
-  });
+  var socket = io.connect(wsHost);
   var roomRef;
+  var isConnected = false;
 
   function logEvent(name) {
     socket.on(name, function (conf) {
@@ -13,6 +12,16 @@ angular.module('pp').service('api', [function () {
 
   logEvent('server-error');
   var self = {
+    onConnect: function (fn) {
+      if (isConnected) {
+        fn();
+        return;
+      }
+      socket.on('connect', function () {
+        isConnected = true;
+        fn();
+      });
+    },
     openRoom: function (name, callback) {
       socket.emit('open-room', {name: name});
       if (callback) {

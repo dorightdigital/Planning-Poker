@@ -1,5 +1,5 @@
 doctype HTML
-html(ng-app='pp')
+html
     head
         title= 'Planning Poker'
         script(src='/socket.io/socket.io.js')
@@ -12,8 +12,7 @@ html(ng-app='pp')
                 img(src='http://dorightdigital.com/sites/default/files/DRD_Website.jpg', alt='Do Right Digital', target="_blank")
             h1= 'Planning Poker'
             p= 'An interactive game of planning poker designed for remote teams.'
-        div.main(ng-view)
-            Loading
+        div.main(ng-view,class='loading', ng-app='pp')
         footer
             :markdown
                 Planning Poker is an open source project run by Do Right Digital Limited.  [To contribute or find out more visit the project on github](http://github.com/dorightdigital/Planning-Poker).

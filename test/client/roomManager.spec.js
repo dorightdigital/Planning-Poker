@@ -15,8 +15,9 @@ describe('Room Creator', function () {
 
   beforeEach(function () {
     testScope = this;
+
     module('pp');
-    api = jasmine.createSpyObj('api', ['openRoom']);
+    api = jasmine.createSpyObj('api', ['openRoom', 'onConnect']);
     ga = jasmine.createSpyObj('GA', ['trackEvent']);
   });
 
@@ -28,5 +29,21 @@ describe('Room Creator', function () {
   it('should track room opening', function () {
     openRoomWithName('def');
     expect(ga.trackEvent).toHaveBeenCalledWith('create-room', 'def');
+  });
+
+  it('should remove loading flag when API is ready', function () {
+    var connectCallback;
+    var rootElem = $('<div ng-app class=loading/>').appendTo('body');
+    api.onConnect = function (fn) {
+      connectCallback = fn;
+    };
+    help.loadController('roomManager', {
+      api: api,
+      tracker: ga
+    });
+    expect(rootElem.hasClass('loading')).toBeTruthy();
+    connectCallback();
+    expect(rootElem.hasClass('loading')).toBeFalsy();
+    rootElem.remove();
   });
 });

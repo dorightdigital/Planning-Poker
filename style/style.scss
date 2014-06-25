@@ -2,7 +2,7 @@
 
 @mixin main-section() {
 	text-align: center;
-	background: #1a7939;
+	background-color: #1a7939;
 	border-radius: 20px;
 	overflow: hidden;
 	margin: 20px;
@@ -78,4 +78,17 @@ header {
 footer {
 	@include main-section();
 	font-size: 14px;
+}
+
+.loading {
+	background: url('/img/ajax-loader.gif') no-repeat center 60px #1a7939;
+	@include main-section();
+	min-height: 100px;
+	&:before {
+		content: 'Loading';
+		margin-bottom: 100px;
+	}
+	> * {
+		display: none;
+	}
 }

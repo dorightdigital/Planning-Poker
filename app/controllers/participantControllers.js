@@ -7,6 +7,10 @@ angular.module('pp').controller('roomParticipate', function ($scope, $routeParam
     $scope.state = newState;
   }
 
+  api.onConnect(function () {
+    $('[ng-app]').removeClass('loading');
+  });
+
   $scope.joinRoom = function (name) {
     tracker.trackEvent('join-room', name);
     setState('pending');

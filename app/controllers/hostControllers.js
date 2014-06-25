@@ -9,6 +9,10 @@ angular.module('pp')
         window.location.href = "#/";
       }
     });
+
+    api.onConnect(function () {
+      $('[ng-app]').removeClass('loading');
+    });
     api.requestRoomDetails($routeParams.roomRef, function (details) {
       $scope.roomName = details.name;
       $scope.joinUrl = fullRoomUrl;
@@ -36,6 +40,9 @@ angular.module('pp')
       api.rejectParticipant(ref);
     };
   }).controller('roomManager',function ($scope, api, tracker) {
+    api.onConnect(function () {
+      $('[ng-app]').removeClass('loading');
+    });
     $scope.createRoom = function () {
       var roomName = $scope.cr.roomName;
       tracker.trackEvent('create-room', roomName);

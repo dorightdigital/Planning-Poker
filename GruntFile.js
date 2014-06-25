@@ -4,9 +4,9 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json')
   });
   var srcFiles = [
-    'bower_components/jquery/jquery.js',
     'bower_components/angular/angular.js',
     'bower_components/angular-route/angular-route.js',
+    'bower_components/jquery/jquery.js',
     'bower_components/jquery-qrcode/jquery.qrcode.min.js',
     'app/main.js',
     'app/**/*.js'
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         dist: {
           files: {
             'build/style.css': [
-              'src/style.scss'
+              'style/style.scss'
             ]
           }
         }
@@ -101,7 +101,7 @@ module.exports = function (grunt) {
       },
       watch: {
         css: {
-          files: ['src/style.scss'],
+          files: ['style/style.scss'],
           tasks: ['sass']
         },
         jsclient: {
