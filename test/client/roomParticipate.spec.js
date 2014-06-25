@@ -1,5 +1,4 @@
-describe('Room Creator', function () {
-  var ga;
+describe('Room Participation', function () {
 
   beforeEach(function () {
     module('pp');
@@ -18,17 +17,10 @@ describe('Room Creator', function () {
   });
 
   it('should remove loading flag when API is ready', function () {
-    var connectCallback;
     var rootElem = $('<div ng-app class=loading/>').appendTo('body');
-    var api = help.createMockApi();
-    api.onConnect = function (fn) {
-      connectCallback = fn;
-    };
-    help.loadController('roomParticipate', {
-      api: api
-    });
+    var controller = help.loadController('roomParticipate');
     expect(rootElem.hasClass('loading')).toBeTruthy();
-    connectCallback();
+    controller.api.callbacks.connect();
     expect(rootElem.hasClass('loading')).toBeFalsy();
     rootElem.remove();
   });

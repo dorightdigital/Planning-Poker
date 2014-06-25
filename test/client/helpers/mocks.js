@@ -12,16 +12,37 @@ var io = {
 };
 
 help.createMockApi = function () {
-  return jasmine.createSpyObj('api', [
-    'onConnect',
+  var spyApi = jasmine.createSpyObj('api', [
     'requestRoomDetails',
     'onVotingRequest',
     'onRoomClose',
     'onUnanimousResult',
     'onMixedResult',
     'mockApi',
+    'requestVotes',
+    'onError',
+    'onJoinRequest',
+    'rejectParticipant',
+    'acceptParticipant',
+    'joinRoom',
+    'vote',
+    'onConnect',
     'openRoom'
   ]);
+  spyApi.callbacks = {};
+  spyApi.onConnect.and.callFake(function (fn) {
+    spyApi.callbacks.connect = fn;
+  });
+  var approveOrReject = {
+    onApprove: function () {
+      return approveOrReject;
+    },
+    onReject: function () {
+      return approveOrReject;
+    }
+  };
+  spyApi.joinRoom.and.returnValue(approveOrReject);
+  return  spyApi;
 };
 
 help.createMockGa = function () {
@@ -30,6 +51,7 @@ help.createMockGa = function () {
 
 help.setupDefaultParams = function () {
   return {
-    tracker: help.createMockGa()
+    tracker: help.createMockGa(),
+    api: help.createMockApi()
   };
 };
