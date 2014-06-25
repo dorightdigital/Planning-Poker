@@ -9,16 +9,14 @@ describe('Room Creator', function () {
   it('should track request to join room', function () {
     help.loadController('roomHost', {
       tracker: ga
-    });
-    this.scope.accept('userRef');
+    }).$scope.accept('userRef');
     expect(ga.trackEvent).toHaveBeenCalledWith('participant-approved');
   });
 
   it('should track request to join room', function () {
     help.loadController('roomHost', {
       tracker: ga
-    });
-    this.scope.reject('userRef');
+    }).$scope.reject('userRef');
     expect(ga.trackEvent).toHaveBeenCalledWith('participant-rejected');
   });
 

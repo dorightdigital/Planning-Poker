@@ -9,23 +9,21 @@ describe('Room Creator', function () {
   it('should track request to join room', function () {
     help.loadController('roomParticipate', {
       tracker: ga
-    });
-    this.scope.joinRoom('abc');
+    }).$scope.joinRoom('abc');
     expect(ga.trackEvent).toHaveBeenCalledWith('join-room', 'abc');
   });
 
   it('should track vote action', function () {
     help.loadController('roomParticipate', {
       tracker: ga
-    });
-    this.scope.voteFor('3');
+    }).$scope.voteFor('3');
     expect(ga.trackEvent).toHaveBeenCalledWith('vote', '3');
   });
 
   it('should remove loading flag when API is ready', function () {
     var connectCallback;
     var rootElem = $('<div ng-app class=loading/>').appendTo('body');
-    var api = jasmine.createSpyObj('api', ['onConnect', 'requestRoomDetails', 'onVotingRequest', 'onRoomClose', 'onUnanimousResult', 'onMixedResult']);
+    var api = help.createMockApi();
     api.onConnect = function (fn) {
       connectCallback = fn;
     };

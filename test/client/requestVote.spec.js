@@ -6,12 +6,11 @@ describe('Room Creator', function () {
     ga = jasmine.createSpyObj('GA', ['trackEvent']);
   });
 
-  it('should track request to join room', function () {
+  it('should track request to vote', function () {
     help.loadController('requestVote', {
       tracker: ga,
       scope: {newVote: {name: 'abc'}}
-    });
-    this.scope.submit('abc');
+    }).$scope.submit();
     expect(ga.trackEvent).toHaveBeenCalledWith('request-vote', 'abc');
   });
 

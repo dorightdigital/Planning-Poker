@@ -9,15 +9,14 @@ describe('Room Creator', function () {
           roomName: roomName
         }
       }
-    });
-    testScope.scope.createRoom();
+    }).$scope.createRoom();
   }
 
   beforeEach(function () {
     testScope = this;
 
     module('pp');
-    api = jasmine.createSpyObj('api', ['openRoom', 'onConnect']);
+    api = help.createMockApi();
     ga = jasmine.createSpyObj('GA', ['trackEvent']);
   });
 

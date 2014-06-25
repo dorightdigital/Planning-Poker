@@ -90,7 +90,7 @@ module.exports = function (grunt) {
       },
       jshint: {
         dev: {
-          src: ['GruntFile.js', 'test/**/*.spec.js', 'public/src/**/*.js', 'server/*.js']
+          src: ['GruntFile.js', 'test/**/*.js', 'public/src/**/*.js', 'server/*.js']
         }
       },
       concat: {
@@ -109,7 +109,7 @@ module.exports = function (grunt) {
           tasks: ['concat', 'jshint', 'jasmine:client', 'jasmine_node:integration']
         },
         jsclienttest: {
-          files: ['test/client/**/*.spec.js'],
+          files: ['test/client/**/*.js'],
           tasks: ['jshint', 'jasmine:client']
         },
         servertest: {
