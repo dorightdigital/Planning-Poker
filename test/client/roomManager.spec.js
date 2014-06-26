@@ -16,7 +16,7 @@ describe('Room Creator', function () {
 
   it('should remove loading flag when API is ready', function () {
     var rootElem = $('<div ng-app class=loading/>').appendTo('body');
-    var controller = help.loadController('roomManager');
+    var controller = help.loadController('roomHost');
     expect(rootElem.hasClass('loading')).toBeTruthy();
     controller.api.callbacks.connect();
     expect(rootElem.hasClass('loading')).toBeFalsy();
@@ -24,14 +24,8 @@ describe('Room Creator', function () {
   });
 
   function openRoomWithName(roomName) {
-    var controller = help.loadController('roomManager', {
-      scope: {
-        cr: {
-          roomName: roomName
-        }
-      }
-    });
-    controller.$scope.createRoom();
+    var controller = help.loadController('roomHost');
+    controller.$scope.createRoom(roomName);
     return controller;
   }
 });

@@ -3,9 +3,6 @@ angular.module('pp', [
 ]).config(function ($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'app/views/createRoom.html',
-      controller: 'roomManager'
-    }).when('/host/:roomRef', {
       templateUrl: 'app/views/hostRoom.html',
       controller: 'roomHost'
     }).when('/participate/:roomRef', {

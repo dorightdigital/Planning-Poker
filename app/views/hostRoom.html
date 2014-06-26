@@ -1,11 +1,19 @@
-<main>
+<form name="cr" ng-submit="createRoom(cr.roomName)" ng-if="!roomReady">
+  <h1>Start a planning poker room</h1>
+
+  <p><input id="roomName" ng-model='cr.roomName' placeholder='Room Name'/></p>
+
+  <p><input ng-if="cr.roomName" type="submit" value="Create Room {{cr.roomName}}"/>
+</form>
+
+<main ng-if="roomReady">
   <h1>Hosting room {{roomName}}</h1>
 
   <p>Participants can join at <a href="{{joinUrl}}" id="joinLink" target="_blank">{{joinUrl}}</a></p>
   <qrcode url="{{joinUrl}}"></qrcode>
 </main>
 <section ng-if="allowVote">
-  <form name="newVote" ng-submit="submit()" ng-controller="requestVote">
+  <form name="newVote" ng-submit="requestVote(newVote.name)" ng-controller="requestVote">
     <div ng-switch="result">
       <div ng-switch-when="unan">
         <h1>Everyone voted {{resultValue}}</h1>
@@ -18,12 +26,10 @@
       </div>
       <div ng-switch-when="pending">
         <voteprogress/>
-        <div ng-controller="fullVotingStatus">
-          <h3>Voted:</h3>
-          <ul ng-repeat="name in voters">
-            <li>{{name}}</li>
-          </ul>
-        </div>
+        <h3>Voted:</h3>
+        <ul ng-repeat="name in voters">
+          <li>{{name}}</li>
+        </ul>
       </div>
     </div>
     <h1>Request a vote</h1>

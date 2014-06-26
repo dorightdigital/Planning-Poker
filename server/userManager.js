@@ -86,6 +86,9 @@ function createUser(socket) {
       socket.emit('room-details', roomInfo);
     },
     disconnect: function () {
+      if (!currentRoomRef) {
+        return;
+      }
       var roomObj = require('./roomManager').get(currentRoomRef);
       if (roomObj) {
         roomObj.actions.removeUser(user);
