@@ -2,7 +2,7 @@ angular.module('pp')
   .directive('guestlist', function () {
     return {
       restrict: 'E',
-      templateUrl: 'app/views/guestList.html',
+      templateUrl: '/app/views/guestList.html',
       controller: function ($scope, api) {
         api.onParticipantUpdate(function (participantList) {
           $scope.guests = participantList;

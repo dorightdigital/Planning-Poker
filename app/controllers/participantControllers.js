@@ -1,6 +1,5 @@
 angular.module('pp').controller('roomParticipate', function ($scope, api, tracker) {
 
-  var roomRef = window.location.href.substr(window.location.href.lastIndexOf('/')+1);
   var currentVote;
   var votedFor = [];
   function setState(newState) {
@@ -14,7 +13,7 @@ angular.module('pp').controller('roomParticipate', function ($scope, api, tracke
   $scope.joinRoom = function (name) {
     tracker.trackEvent('join-room', name);
     setState('pending');
-    api.joinRoom(roomRef, name)
+    api.joinRoom($scope.roomRef, name)
       .onApprove(function () {
         setState('in-room');
         $scope.$apply();
@@ -30,13 +29,9 @@ angular.module('pp').controller('roomParticipate', function ($scope, api, tracke
     }
     tracker.trackEvent('vote', value);
     votedFor.push(currentVote);
-    api.vote(value, currentVote, roomRef);
+    api.vote(value, currentVote, $scope.roomRef);
     $scope.voted = true;
   };
-  api.requestRoomDetails(roomRef, function (info) {
-    $scope.roomName = info.name;
-    $scope.$apply();
-  });
   api.onVotingRequest(function (taskName, taskRef) {
     $scope.taskName = taskName;
     $scope.voted = false;

@@ -11,7 +11,7 @@ angular.module('pp')
       api.openRoom(roomName, function (room) {
         $('[ng-app]').removeClass('loading');
         var portString = window.location.port === '' ? '' : (':' + window.location.port);
-        $scope.joinUrl = window.location.protocol + '//' + window.location.hostname + portString + '/#/participate/' + room.ref;
+        $scope.joinUrl = window.location.protocol + '//' + window.location.hostname + portString + '/participate/' + room.ref;
         $scope.roomName = roomName;
         $scope.roomReady = true;
         $scope.$apply();
