@@ -1,4 +1,5 @@
 var express = require("express");
+var roomManager = require("./roomManager");
 var app = express();
 var port = process.env.PORT || 8000;
 app.set('views', __dirname + '/tpl');
@@ -15,7 +16,7 @@ app.get("/", function (req, res) {
   });
 });
 app.get("/participate/:roomRef", function (req, res) {
-  room = require("./roomManager").get(req.params.roomRef);
+  room = roomManager.get(req.params.roomRef);
   if (room) {
     res.render("page", {
       controller: 'roomParticipate',
