@@ -13,6 +13,7 @@ var io = {
 
 help.createMockApi = function () {
   var spyApi = jasmine.createSpyObj('api', [
+    'onFullVotingStatus',
     'requestRoomDetails',
     'onVotingRequest',
     'onRoomClose',

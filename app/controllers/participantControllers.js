@@ -1,6 +1,6 @@
-angular.module('pp').controller('roomParticipate', function ($scope, $routeParams, api, tracker) {
+angular.module('pp').controller('roomParticipate', function ($scope, api, tracker) {
 
-  var roomRef = $routeParams.roomRef;
+  var roomRef = window.location.href.substr(window.location.href.lastIndexOf('/')+1);
   var currentVote;
   var votedFor = [];
   function setState(newState) {

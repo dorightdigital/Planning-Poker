@@ -1,6 +1,6 @@
 var help = help || {};
 
-help.lookupService = angular.injector([ 'pp' ]).get;
+//help.lookupService = angular.injector([ 'pp' ]).get;
 
 help.loadController = function (name, injections) {
   var params;

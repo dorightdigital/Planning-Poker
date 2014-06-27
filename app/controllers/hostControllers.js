@@ -1,5 +1,5 @@
 angular.module('pp')
-  .controller('roomHost',function ($scope, $routeParams, api, tracker) {
+  .controller('roomHost',function ($scope, api, tracker) {
     $scope.activePeople = {};
     var alreadyResponded = [];
     api.onConnect(function () {
@@ -39,7 +39,7 @@ angular.module('pp')
       alreadyResponded.push(ref);
       api.rejectParticipant(ref);
     };
-  }).controller('requestVote', function ($scope, $routeParams, api, tracker) {
+  }).controller('requestVote', function ($scope, api, tracker) {
     $scope.requestVote = function (voteName) {
       tracker.trackEvent('request-vote', voteName)
       $scope.voteInProgress = true;
