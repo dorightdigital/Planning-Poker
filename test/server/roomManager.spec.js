@@ -58,6 +58,16 @@ describe('Room Manager', function () {
         return host.participantRequest.mostRecentCall.args[0];
       }
 
+      beforeEach(function () {
+        spyOn(host, 'sendError');
+        spyOn(guest, 'sendError');
+      });
+
+      afterEach(function () {
+        expect(host.sendError).not.toHaveBeenCalled();
+        expect(guest.sendError).not.toHaveBeenCalled();
+      });
+
       it('should inform host when user requests to join room', function () {
         spyOn(host, 'participantRequest');
         guest.setName('abc');
@@ -69,7 +79,7 @@ describe('Room Manager', function () {
         spyOn(host, 'participantRequest');
         guest.setName('abc');
         room.actions.participantRequest(guest);
-        room.actions.removeUser(guest);
+        room.actions.removeUser(guest, guest);
         expect(host.participantRequest).toHaveBeenCalledWith(jasmine.any(Array), room);
         expect(potentialParticipantList()).toEqual([]);
       });
@@ -127,8 +137,8 @@ describe('Room Manager', function () {
           var data = user.pushParticipantList.calls[0].args[1];
           expect(user.pushParticipantList).toHaveBeenCalledWith(room.info.ref, jasmine.any(Object));
           expect(data).toEqual([
-            {name: 'Miss. Guest'},
-            {name: 'Abc'}
+            {name: 'Miss. Guest', ref: guest.getRef()},
+            {name: 'Abc', ref: guest2.getRef()}
           ]);
         });
       });
@@ -136,7 +146,7 @@ describe('Room Manager', function () {
         room.actions.participantRequest(guest);
         room.actions.participantAccept(guest, host);
         spyOn(host, 'pushParticipantList');
-        room.actions.removeUser(guest);
+        room.actions.removeUser(guest, guest);
         expect(host.pushParticipantList).toHaveBeenCalled();
         expect(host.pushParticipantList.mostRecentCall.args[1]).toEqual({});
       });
@@ -148,13 +158,13 @@ describe('Room Manager', function () {
         spyOn(guest, 'pushParticipantList');
         spyOn(guest, 'roomClosed');
         spyOn(pendingGuest, 'roomClosed');
-        room.actions.removeUser(host);
+        room.actions.removeUser(host, host);
         expect(guest.pushParticipantList).not.toHaveBeenCalled();
         expect(guest.roomClosed).toHaveBeenCalled();
         expect(pendingGuest.roomClosed).toHaveBeenCalled();
       });
       it('should properly remove room when host leaves', function () {
-        room.actions.removeUser(host);
+        room.actions.removeUser(host, host);
         expect(roomManager.exists(room.info.ref)).toBeFalsy();
       });
       it('should ignore rejection when not from host', function () {
@@ -242,9 +252,20 @@ describe('Room Manager', function () {
         });
         it('should update voting status when new guest leaves before voting', function () {
           host.fullVotingStatus.reset();
-          room.actions.removeUser(guest);
+          room.actions.removeUser(guest, guest);
           expect(host.fullVotingStatus).toHaveBeenCalled();
           expect(pendingNames).not.toContain('abc');
+        });
+        it('should refuse to remove if one guest attempts to remove another guest', function () {
+          var user = help.generateUser();
+          spyOn(user, 'sendError');
+          room.actions.removeUser(guest, user);
+          expect(user.sendError).toHaveBeenCalledWith('Only the host can remove a user');
+        });
+        it('should inform user if they\'ve been removed', function () {
+          spyOn(guest, 'accessRefused');
+          room.actions.removeUser(guest, host);
+          expect(guest.accessRefused).toHaveBeenCalled();
         });
         it('should update voting status anonymously for guests and host', function () {
           room.actions.voteReceived(guest, 'known-guid', 13);

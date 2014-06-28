@@ -49,6 +49,9 @@ angular.module('pp').service('api', [function () {
       };
       return output;
     },
+    onAccessRefused: function (fn) {
+      socket.on('participant-reject', fn);
+    },
     onJoinRequest: function (fn) {
       socket.on('participant-request', fn);
     },
@@ -131,6 +134,9 @@ angular.module('pp').service('api', [function () {
         fn(data);
       });
       socket.emit('ping-room-details', {roomRef: roomRef});
+    },
+    removeUserFromRoom: function (userRef) {
+      socket.emit('remove-user', {roomRef: roomRef, userRef: userRef});
     }
   };
   return  self;

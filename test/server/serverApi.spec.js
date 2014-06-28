@@ -134,6 +134,12 @@ describe('Server API', function () {
       fireEvent('disconnect');
       expect(user.disconnect).toHaveBeenCalledWith();
     });
+    it('should pass on user removal request', function () {
+      var removableUser = help.generateUser();
+      spyOn(room.actions, 'removeUser');
+      fireEvent('remove-user', {userRef: removableUser.getRef(), roomRef: room.info.ref});
+      expect(room.actions.removeUser).toHaveBeenCalledWith(removableUser, user);
+    });
     it('should send back room details on ping', function () {
       spyOn(user, 'roomDetails');
       fireEvent('ping-room-details', {roomRef: room.info.ref});

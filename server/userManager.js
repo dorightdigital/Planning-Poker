@@ -91,7 +91,7 @@ function createUser(socket) {
       }
       var roomObj = require('./roomManager').get(currentRoomRef);
       if (roomObj) {
-        roomObj.actions.removeUser(user);
+        roomObj.actions.removeUser(user, user);
       } else {
         console.warn('no room found while disconnecting');
       }

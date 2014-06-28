@@ -75,18 +75,18 @@ describe('User Manager', function () {
     guest.setCurrentRoomRef(room.info.ref);
     spyOn(room.actions, 'removeUser');
     guest.disconnect();
-    expect(room.actions.removeUser).toHaveBeenCalledWith(guest);
+    expect(room.actions.removeUser).toHaveBeenCalledWith(guest, guest);
   });
   it('should leave room participated in on joining another room', function () {
     guest.setCurrentRoomRef(room.info.ref);
     spyOn(room.actions, 'removeUser');
     guest.setCurrentRoomRef('a');
-    expect(room.actions.removeUser).toHaveBeenCalledWith(guest);
+    expect(room.actions.removeUser).toHaveBeenCalledWith(guest, guest);
   });
   it('should leave hosted room on disconnect', function () {
     spyOn(room.actions, 'removeUser');
     host.disconnect();
-    expect(room.actions.removeUser).toHaveBeenCalledWith(host);
+    expect(room.actions.removeUser).toHaveBeenCalledWith(host, host);
   });
   it('should inform user of room closure', function () {
     guest.roomClosed('ref');

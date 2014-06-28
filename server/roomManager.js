@@ -17,7 +17,8 @@ exports.create = function (host, name) {
     var part = [];
     _.each(participants, function (participant) {
       part.push({
-        name: participant.getName()
+        name: participant.getName(),
+        ref: participant.getRef()
       });
     });
     host.pushParticipantList(ref, part);
@@ -126,7 +127,12 @@ exports.create = function (host, name) {
         votingStatus.pending = _.without(votingStatus.pending, userName);
         sendVotingStatusUpdate();
       },
-      removeUser: function (user) {
+      removeUser: function (user, requestor) {
+        if (requestor !== user && requestor != host) {
+          requestor.sendError('Only the host can remove a user');
+          return;
+        }
+        user.accessRefused();
         if (user === host) {
           _.each(potentialParticipants, function (part) {
             part.roomClosed(room);

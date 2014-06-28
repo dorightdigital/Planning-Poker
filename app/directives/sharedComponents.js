@@ -4,9 +4,15 @@ angular.module('pp')
       restrict: 'E',
       templateUrl: '/app/views/guestList.html',
       controller: function ($scope, api) {
+        $scope.remove = function (userRef) {
+          api.removeUserFromRoom(userRef);
+        };
         api.onParticipantUpdate(function (participantList) {
           $scope.guests = participantList;
           $scope.$apply();
+        });
+        api.onAccessRefused(function () {
+          $scope.guests = [];
         });
         api.onRoomClose(function () {
           $scope.guests = [];

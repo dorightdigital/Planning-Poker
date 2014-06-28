@@ -42,6 +42,9 @@ exports.init = function (server) {
     socket.on('participant-reject', function (config) {
       callWithRoomAndUser(config, 'participantReject');
     });
+    socket.on('remove-user', function (config) {
+      callWithRoomAndUser(config, 'removeUser');
+    });
     socket.on('disconnect', function () {
       user.disconnect();
     });

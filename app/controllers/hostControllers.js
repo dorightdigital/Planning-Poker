@@ -1,6 +1,7 @@
 angular.module('pp')
   .controller('roomHost',function ($scope, api, tracker) {
     $scope.activePeople = {};
+    $scope.host = true;
     var alreadyResponded = [];
     api.onConnect(function () {
       $('[ng-app]').removeClass('loading');
