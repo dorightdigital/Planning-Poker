@@ -1,6 +1,4 @@
-require('../support/world.js');
-
-function tmp() {
+module.exports = function () {
   var world = this.World = require("../support/world.js").World;
 
   this.Given = this.Then = this.defineStep;
@@ -63,6 +61,4 @@ function tmp() {
     }
   }
 
-}
-
-module.exports = tmp;
+};
