@@ -23,7 +23,7 @@ module.exports = function (grunt) {
           }
         },
         inttest: {
-          tasks: ['nodemon', 'jasmine_node:integration'],
+          tasks: ['nodemon', 'cucumberjs'],
           options: {
             logConcurrentOutput: true
           }
@@ -76,9 +76,14 @@ module.exports = function (grunt) {
           }
         }
       },
+      cucumberjs: {
+        src: 'test/features',
+        options: {
+          steps: "test/features/step_definitions"
+        }
+      },
       jasmine_node: {
-        server: ['test/server'],
-        integration: ['test/integration']
+        server: ['test/server']
       },
       jasmine: {
         client: {
@@ -106,7 +111,7 @@ module.exports = function (grunt) {
         },
         jsclient: {
           files: ['app/**/*.js'],
-          tasks: ['concat', 'jshint', 'jasmine:client', 'jasmine_node:integration']
+          tasks: ['concat', 'jshint', 'jasmine:client', 'cucumberjs']
         },
         jsclienttest: {
           files: ['test/client/**/*.js'],
@@ -114,11 +119,11 @@ module.exports = function (grunt) {
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
-          tasks: ['jasmine_node:server', 'jasmine_node:integration']
+          tasks: ['jasmine_node:server', 'cucumberjs']
         },
         integrationtest: {
-          files: ['test/integration/**/*.spec.js'],
-          tasks: ['jasmine_node:integration']
+          files: ['test/features/*.feature', 'test/features/**/*.js'],
+          tasks: ['cucumberjs']
         }
       }
     }
@@ -133,6 +138,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-install-dependencies');
+  grunt.loadNpmTasks('grunt-cucumber');
 
   grunt.registerTask('precompile', ['sass', 'concat']);
   grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint']);

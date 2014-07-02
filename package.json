@@ -21,7 +21,8 @@
     "grunt-contrib-concat": "~0.4.0",
     "grunt-sass": "~0.14.0",
     "grunt-jasmine-node": "~0.2.1",
-    "grunt-contrib-jasmine": "~0.6.5"
+    "grunt-contrib-jasmine": "~0.6.5",
+    "grunt-cucumber": "~0.2.3"
   },
   "scripts": {
     "postinstall": "bower install"
