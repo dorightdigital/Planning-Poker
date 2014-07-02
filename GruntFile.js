@@ -56,24 +56,6 @@ module.exports = function (grunt) {
             ext: 'js',
             watch: ['server']
           }
-        },
-        dev: {
-          script: 'server/index.js',
-          options: {
-            env: {
-              PORT: '8001'
-            },
-            watch: ['none']
-          }
-        },
-        live: {
-          script: 'server/index.js',
-          options: {
-            env: {
-              PORT: '8101'
-            },
-            watch: ['none']
-          }
         }
       },
       cucumberjs: {
