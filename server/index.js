@@ -1,7 +1,7 @@
 var express = require("express");
 var roomManager = require("./roomManager");
 var app = express();
-var port = process.env.PORT || 8000;
+var port = process.env.PORT || 7801;
 app.set('views', __dirname + '/tpl');
 app.set('view engine', "jade");
 app.engine('jade', require('jade').__express);

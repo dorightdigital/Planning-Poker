@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-  var  _ = require('underscore');
+  var _ = require('underscore');
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json')
   });
@@ -59,9 +59,18 @@ module.exports = function (grunt) {
         }
       },
       cucumberjs: {
-        src: 'test/features',
-        options: {
-          steps: "test/features/step_definitions"
+        dev: {
+          src: 'test/features',
+          options: {
+            steps: "test/features/step_definitions"
+          }
+        },
+        smoke: {
+          src: 'test/features',
+          options: {
+            steps: "test/features/step_definitions",
+            tags: '@smoke'
+          }
         }
       },
       jasmine_node: {
@@ -93,7 +102,7 @@ module.exports = function (grunt) {
         },
         jsclient: {
           files: ['app/**/*.js'],
-          tasks: ['concat', 'jshint', 'jasmine:client', 'cucumberjs']
+          tasks: ['concat', 'jshint', 'jasmine:client', 'cucumberjs:dev']
         },
         jsclienttest: {
           files: ['test/client/**/*.js'],
@@ -101,11 +110,11 @@ module.exports = function (grunt) {
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
-          tasks: ['jasmine_node:server', 'cucumberjs']
+          tasks: ['jasmine_node:server', 'cucumberjs:dev']
         },
         integrationtest: {
           files: ['test/features/*.feature', 'test/features/**/*.js'],
-          tasks: ['cucumberjs']
+          tasks: ['cucumberjs:dev']
         }
       }
     }
@@ -123,7 +132,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-cucumber');
 
   grunt.registerTask('precompile', ['sass', 'concat']);
-  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint']);
+  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint', 'cucumberjs:smoke']);
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);

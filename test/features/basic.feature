@@ -9,6 +9,7 @@ Feature: Basic end-to-end integration tests
 		When guest visits room
 		Then guest should see title "Join room My room"
 
+		@smoke
 	Scenario: Request to join a room
 		Given I create room "My room"
 		When guest visits room

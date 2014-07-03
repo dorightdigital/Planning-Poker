@@ -1,10 +1,11 @@
 var zombie = require('zombie');
+require('../../../server/index.js');
 exports.World = function (callback) {
 
   function openBrowserWindow(location, fn) {
     var browser = new zombie();
     setTimeout(function () {
-      var fullLocation = location.indexOf('http') === 0 ? location : ("http://localhost:7901" + location);
+      var fullLocation = location.indexOf('http') === 0 ? location : ("http://localhost:7801" + location);
       console.log('visiting ', fullLocation);
       browser.visit(fullLocation, function () {
         fn(browser);
