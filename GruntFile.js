@@ -132,7 +132,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-cucumber');
 
   grunt.registerTask('precompile', ['sass', 'concat']);
-  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint', 'cucumberjs:smoke']);
+  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint']);
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
