@@ -1,4 +1,11 @@
-<div ng-switch="state">
+<aside
+  class="sidebar"
+  ng-if="state == 'in-room' || state == 'unan-result' || state == 'mixed-result' || state == 'voting'"
+  ng-click="vis='shown'"
+  ng-class="{collapsed: vis != 'shown'}">
+  <guestlist/>
+</aside>
+<div ng-switch="state" class="main">
   <div ng-switch-when="in-room">
     <h1>In room {{roomName}}</h1>
 
@@ -40,5 +47,3 @@
     </form>
   </div>
 </div>
-
-<guestlist/>

@@ -1,51 +1,56 @@
-<form name="cr" ng-submit="createRoom(cr.roomName)" ng-if="!roomReady">
-  <h1>Start a planning poker room</h1>
+<aside class="sidebar" ng-if="roomReady">
+  <section ng-if="pendingPeople.length > 0" class="pendingPeople">
+    <h2>Pending Participants</h2>
+    <ul ng-repeat="person in pendingPeople">
+      <li>
+        <span class="name">{{person.name}}</span>
+        <button ng-click="accept(person.ref)" class="accept">Accept</button>
+        <button ng-click="reject(person.ref)">Reject</button>
+      </li>
+    </ul>
+  </section>
+  <section>
+    <guestlist/>
+  </section>
+  <section>
 
-  <p><input id="roomName" ng-model='cr.roomName' placeholder='Room Name'/></p>
+    <h2>Invite participants:</h2>
 
-  <p><input ng-if="cr.roomName" type="submit" value="Create Room {{cr.roomName}}"/>
-</form>
+    <p><a href="{{joinUrl}}" id="joinLink" target="_blank">{{joinUrl}}</a></p>
+    <qrcode url="{{joinUrl}}"></qrcode>
+  </section>
+</aside>
+<div class="main">
+  <form name="cr" ng-submit="createRoom(cr.roomName)" ng-if="!roomReady">
+    <h1>Start a planning poker room</h1>
 
-<main ng-if="roomReady">
-  <h1>Hosting room {{roomName}}</h1>
-
-  <p>Participants can join at <a href="{{joinUrl}}" id="joinLink" target="_blank">{{joinUrl}}</a></p>
-  <qrcode url="{{joinUrl}}"></qrcode>
-</main>
-<section ng-if="allowVote">
-  <form name="newVote" ng-submit="requestVote(newVote.name)" ng-controller="requestVote">
-    <div ng-switch="result">
-      <div ng-switch-when="unan">
-        <h1>Everyone voted {{resultValue}}</h1>
-      </div>
-      <div ng-switch-when="mixed">
-        <h1>Not everyone agreed:</h1>
-        <ul ng-repeat="result in resultList">
-          <li>{{result}}</li>
-        </ul>
-      </div>
-      <div ng-switch-when="pending">
-        <voteprogress/>
-        <h3>Voted:</h3>
-        <ul ng-repeat="name in voters">
-          <li>{{name}}</li>
-        </ul>
-      </div>
-    </div>
-    <h1>Request a vote</h1>
-    <input ng-model="newVote.name" placeholder="Task name" required/>
-    <input type="submit" value="Request"/>
+    <p><input id="roomName" ng-model='cr.roomName' placeholder='Room Name'/><input type="submit" value="Create Room"/>
   </form>
-</section>
-<section ng-if="pendingPeople.length > 0" class="pendingPeople">
-  <h1>Pending Participants</h1>
-  <ul ng-repeat="person in pendingPeople">
-    <li>
-      <span class="name">{{person.name}}</span>
-      <button ng-click="accept(person.ref)">Accept</button>
-      <button ng-click="reject(person.ref)">Reject</button>
-    </li>
-  </ul>
-</section>
-<guestlist/>
 
+  <h1 ng-if="roomReady">Hosting room {{roomName}}</h1>
+  <section ng-if="allowVote">
+    <form name="newVote" ng-submit="requestVote(newVote.name)" ng-controller="requestVote">
+      <h1>Request a vote</h1>
+      <input ng-model="newVote.name" placeholder="Task name" required/>
+      <input type="submit" value="Request"/>
+      <div ng-switch="result">
+        <div ng-switch-when="unan">
+          <h1>Everyone voted {{resultValue}}</h1>
+        </div>
+        <div ng-switch-when="mixed">
+          <h1>Not everyone agreed:</h1>
+          <ul ng-repeat="result in resultList">
+            <li>{{result}}</li>
+          </ul>
+        </div>
+        <div ng-switch-when="pending">
+          <voteprogress/>
+          <h3>Voted:</h3>
+          <ul ng-repeat="name in voters">
+            <li>{{name}}</li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

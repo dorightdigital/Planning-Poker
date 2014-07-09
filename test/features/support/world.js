@@ -18,7 +18,7 @@ exports.World = function (callback) {
     openBrowserWindow("/", function (currentBrowser) {
       currentBrowser
         .fill('#roomName', roomName)
-        .pressButton('Create Room ' + roomName, function () {
+        .pressButton('Create Room', function () {
           console.log('pressed room button');
           setTimeout(function () {
             callback(currentBrowser);
