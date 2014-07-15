@@ -24,8 +24,8 @@ module.exports = function () {
   });
 
   this.When(/^guest disconnects/, function (callback) {
-    world.guestBrowser.reload();
-    callback();
+    world.guestBrowser.evaluate('forceDisconnect();');
+    setTimeout(callback, 500);
   });
 
   this.defineStep(/^after (\d+) seconds$/, function(arg1, callback) {
@@ -47,10 +47,7 @@ module.exports = function () {
   });
 
   this.Then(/^host should see no participation requests/, function (callback) {
-    setTimeout(function () {
-      console.log('name: ',world.hostBrowser.text('.pendingPeople .name'));
-      assertEquals(world.hostBrowser.queryAll('.pendingPeople .name').length, 0, callback);
-    }, 6000);
+    assertEquals(world.hostBrowser.queryAll('.pendingPeople .name').length, 0, callback);
   });
 
   function assertEquals(actualTitle, expectedTitle, callback) {

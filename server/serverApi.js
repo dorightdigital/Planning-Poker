@@ -48,6 +48,9 @@ exports.init = function (server) {
     socket.on('disconnect', function () {
       user.disconnect();
     });
+    socket.on('forced-disconnect', function () {
+      user.disconnect();
+    });
     socket.on('request-voting-round', function (config) {
       withSpecifiedRoom(config.roomRef, function (room) {
         room.actions.newVotingRound(config.name, user);

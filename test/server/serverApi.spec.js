@@ -134,6 +134,11 @@ describe('Server API', function () {
       fireEvent('disconnect');
       expect(user.disconnect).toHaveBeenCalledWith();
     });
+    it('should pass on message when user forces a disconnect', function () {
+      spyOn(user, 'disconnect');
+      fireEvent('forced-disconnect');
+      expect(user.disconnect).toHaveBeenCalledWith();
+    });
     it('should pass on user removal request', function () {
       var removableUser = help.generateUser();
       spyOn(room.actions, 'removeUser');

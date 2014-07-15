@@ -4,6 +4,10 @@ angular.module('pp').service('api', [function () {
   var roomRef;
   var isConnected = false;
 
+  window.forceDisconnect = function () {
+    socket.emit('forced-disconnect');
+  };
+
   function logEvent(name) {
     socket.on(name, function (conf) {
       console.log('Received', name, conf);
