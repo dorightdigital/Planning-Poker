@@ -4,8 +4,8 @@
     <ul ng-repeat="person in pendingPeople">
       <li>
         <span class="name">{{person.name}}</span>
-        <button ng-click="accept(person.ref)" class="accept">Accept</button>
-        <button ng-click="reject(person.ref)">Reject</button>
+        <button ng-click="accept(person.ref)" class="accept" person-name="{{person.name}}">Accept</button>
+        <button ng-click="reject(person.ref)" class="reject" person-name="{{person.name}}">Reject</button>
       </li>
     </ul>
   </section>
@@ -31,8 +31,8 @@
   <section ng-if="allowVote">
     <form name="newVote" ng-submit="requestVote(newVote.name)" ng-controller="requestVote">
       <h1>Request a vote</h1>
-      <input ng-model="newVote.name" placeholder="Task name" required/>
-      <input type="submit" value="Request"/>
+      <input ng-model="newVote.name" id="voteName" placeholder="Task name" required/>
+      <input type="submit" id="requestVote" value="Request"/>
       <div ng-switch="result">
         <div ng-switch-when="unan">
           <h1>Everyone voted {{resultValue}}</h1>

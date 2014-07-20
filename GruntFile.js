@@ -62,13 +62,15 @@ module.exports = function (grunt) {
         dev: {
           src: 'test/features',
           options: {
-            steps: "test/features/step_definitions"
+            steps: "test/features/step_definitions",
+            format: "pretty"
           }
         },
         smoke: {
           src: 'test/features',
           options: {
             steps: "test/features/step_definitions",
+            format: "pretty",
             tags: '@smoke'
           }
         }
