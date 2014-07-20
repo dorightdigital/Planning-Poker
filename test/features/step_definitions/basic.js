@@ -83,12 +83,19 @@ module.exports = function () {
     setTimeout(callback, 500);
   });
 
+  this.When(/^(.*) votes (\d+)$/, function(name, value, callback) {
+    lookupGuestBrowser(name).pressButton('[vote-value="' + value + '"]');
+    setTimeout(function () {
+      callback();
+    }, 300);
+  });
+
   this.defineStep(/^after (\d+) seconds$/, function(arg1, callback) {
     setTimeout(callback, arg1*1000);
   });
 
-  this.Then(/^I should see title "([^"]*)"$/, function (expectedTitle, callback) {
-    assertEquals(world.hostBrowser.text('.main h1'), expectedTitle, callback);
+  this.Then(/^(.*) should see vote summary "([^"]*)"$/, function (name, expectedTitle, callback) {
+    assertEquals(lookupGuestBrowser(name).text('.main .vote-summary'), expectedTitle, callback);
   });
 
   this.Then(/^(.*) should see title "([^"]*)"$/, function (name, title, callback) {

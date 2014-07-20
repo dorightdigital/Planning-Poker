@@ -35,10 +35,10 @@
       <input type="submit" id="requestVote" value="Request"/>
       <div ng-switch="result">
         <div ng-switch-when="unan">
-          <h1>Everyone voted {{resultValue}}</h1>
+          <h1 class="vote-summary">Everyone voted {{resultValue}}</h1>
         </div>
         <div ng-switch-when="mixed">
-          <h1>Not everyone agreed:</h1>
+          <h1 class="vote-summary">Vote was not unanimous</h1>
           <ul ng-repeat="result in resultList">
             <li>{{result}}</li>
           </ul>

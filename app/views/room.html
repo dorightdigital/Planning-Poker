@@ -23,10 +23,10 @@
     <p>Refresh the page to retry.</p>
   </div>
   <div ng-switch-when="unan-result">
-    <h1>Everyone voted {{resultValue}}</h1>
+    <h1 class="vote-summary">Everyone voted {{resultValue}}</h1>
   </div>
   <div ng-switch-when="mixed-result">
-    <h1>There was no concensus</h1>
+    <h1 class="vote-summary">Vote was not unanimous</h1>
     <ul ng-repeat="result in resultList">
       <li>{{result}}</li>
     </ul>
@@ -35,7 +35,7 @@
     <h1>Vote on {{taskName}}</h1>
 
     <span ng-if="!voted" ng-repeat="value in [1,2,3,5,8,13,21]">
-      <button ng-click="voteFor(value)">{{value}}</button>
+      <button ng-click="voteFor(value)" vote-value="{{value}}">{{value}}</button>
     </span>
     <voteprogress/>
   </div>
