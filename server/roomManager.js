@@ -46,6 +46,7 @@ exports.create = function (host, name) {
       _.each(participants, function (user) {
         user.result.apply(user, params);
       });
+      votingStatus = undefined;
     } else {
       host.fullVotingStatus(voteRef, votingStatus.pending, votingStatus.voted);
       _.each(participants, function (participant) {

@@ -76,7 +76,7 @@ module.exports = function () {
     }
     var browser = world.guestBrowsersByName[name];
     if (!browser) {
-      throw 'No browser for name ' + name;
+      throw 'No browser for name ' + name + '.  Browsers are ' + _.keys(world.guestBrowsersByName).join(', ');
     }
     return browser;
   }
@@ -132,7 +132,9 @@ module.exports = function () {
   });
 
   this.Given(/^(.*) joins the room$/, function(name, callback) {
-    fullyJoinRoom(name, callback);
+    fullyJoinRoom(name, function () {
+      setTimeout(callback, 500);
+    });
   });
 
   this.When(/^I request a vote for task "([^"]*)"$/, function(taskName, callback) {
@@ -147,8 +149,9 @@ module.exports = function () {
   this.Given(/^I create a room with (\d+) users$/, function(arg1, callback) {
     createRoom('My Room', function () {
       var callbackGenerator = new ChainedDeferred(callback);
-      while (arg1-- > 0) {
+      while (arg1 > 0) {
         fullyJoinRoom('Guest ' + arg1, callbackGenerator.getInstance());
+        arg1--;
       }
       callbackGenerator.configComplete();
     });

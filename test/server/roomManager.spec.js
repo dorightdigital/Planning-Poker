@@ -250,6 +250,14 @@ describe('Room Manager', function () {
           expect(host.fullVotingStatus).toHaveBeenCalled();
           expect(pendingNames).toContain('ghi');
         });
+        it('should not send voting status to new guest when they join after voting round', function () {
+          room.actions.voteReceived(guest, 'known-guid', 13);
+          room.actions.voteReceived(guest2, 'known-guid', 13);
+          var guest3 = help.generateUser();
+          spyOn(guest3, 'voteRequired');
+          requestAndAcceptGuest(guest3, 'jkl');
+          expect(guest3.voteRequired).not.toHaveBeenCalled();
+        });
         it('should update voting status when new guest leaves before voting', function () {
           host.fullVotingStatus.reset();
           room.actions.removeUser(guest, guest);

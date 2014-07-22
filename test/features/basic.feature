@@ -75,3 +75,10 @@ Feature: Basic end-to-end integration tests
 		And 2 users vote 3
 		Then all users should see vote progress as 66%
 
+	Scenario: Users joining after a vote have missed their chance
+		Given I create a room with 2 users
+		When I request a vote
+		And 2 users vote 3
+		And Fred joins the room
+		Then Fred should see title "In room My Room"
+
