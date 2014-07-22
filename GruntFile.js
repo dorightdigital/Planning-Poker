@@ -59,7 +59,7 @@ module.exports = function (grunt) {
         }
       },
       cucumberjs: {
-        dev: {
+        all: {
           src: 'test/features',
           options: {
             steps: "test/features/step_definitions",
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
         },
         jsclient: {
           files: ['app/**/*.js'],
-          tasks: ['concat', 'jshint', 'jasmine:client', 'cucumberjs:dev']
+          tasks: ['concat', 'jshint', 'jasmine:client', 'cucumberjs:all']
         },
         jsclienttest: {
           files: ['test/client/**/*.js'],
@@ -120,11 +120,11 @@ module.exports = function (grunt) {
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
-          tasks: ['jasmine_node:server', 'cucumberjs:dev']
+          tasks: ['jasmine_node:server', 'cucumberjs:all']
         },
         integrationtest: {
           files: ['test/features/*.feature', 'test/features/**/*.js'],
-          tasks: ['cucumberjs:dev']
+          tasks: ['cucumberjs:all']
         }
       }
     }
@@ -142,7 +142,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-cucumber');
 
   grunt.registerTask('precompile', ['sass', 'concat']);
-  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint', 'cucumberjs:smoke']);
+  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint', 'cucumberjs:all']);
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
