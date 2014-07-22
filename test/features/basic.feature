@@ -31,6 +31,17 @@ Feature: Basic end-to-end integration tests
 		And Fred should see vote summary "Everyone voted 3"
 		And George should see vote summary "Everyone voted 3"
 
+	Scenario: Special Chars in room name
+		Given I create room "Mat's Room"
+		And George joins the room
+		When I request a vote
+		Then George should be requested to vote
+
+	Scenario: Special Chars in guest name
+		Given I create a room
+		And George 'something' joins the room
+		When I request a vote
+		Then George 'something' should be requested to vote
 
 	Scenario: Vote Requests
 		Given I create a room

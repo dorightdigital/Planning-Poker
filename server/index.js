@@ -22,7 +22,7 @@ app.get("/participate/:roomRef", function (req, res) {
       controller: 'roomParticipate',
       isHome: false,
       roomRef: room.info.ref,
-      roomName: room.info.name
+      safeRoomName: (room.info.name || '').replace("'", "\\\'")
     });
   } else {
     throw 'not found';

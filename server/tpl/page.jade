@@ -12,7 +12,7 @@ html
                 img(src='http://dorightdigital.com/sites/default/files/DRD_Website.jpg', alt='Do Right Digital', target="_blank")
             h1= 'Planning Poker'
             p= 'An interactive game of planning poker designed for remote teams.'
-        main(ng-view,class='loading', ng-app='pp', ng-controller=controller, ng-init="roomName='#{roomName}'; roomRef='#{roomRef}'")
+        main(ng-view,class='loading', ng-app='pp', ng-controller=controller, ng-init="roomName='#{safeRoomName}'; roomRef='#{roomRef}'")
             if isHome
                 include ../../app/views/hostRoom.html
             else
