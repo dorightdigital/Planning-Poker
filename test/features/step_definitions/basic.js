@@ -1,4 +1,5 @@
 var zombie = require('zombie');
+var _ = require('lodash');
 
 module.exports = function () {
   var world = this.World = require("../support/world.js").World;
@@ -37,8 +38,29 @@ module.exports = function () {
     });
   }
 
+  function fullyJoinRoom(name, callback) {
+    visitCurrentRoom(name, function () {
+      joinRoomWithName(name);
+      acceptGuest(name, callback);
+    });
+  }
+
+  function requestVoteOnTask(taskName, callback) {
+    world.hostBrowser.fill('#voteName', taskName).pressButton('#requestVote');
+    setTimeout(function () {
+      callback();
+    }, 300);
+  }
+
   function joinRoomWithName(name) {
-    lookupGuestBrowser(name).fill('#name', name).pressButton('Join');
+    lookupGuestBrowser(name, true).fill('#name', name).pressButton('Join');
+  }
+
+  function userVotes(name, value, callback) {
+    lookupGuestBrowser(name).pressButton('[vote-value="' + value + '"]');
+    setTimeout(function () {
+      callback();
+    }, 300);
   }
 
   function acceptGuest(name, callback) {
@@ -84,10 +106,7 @@ module.exports = function () {
   });
 
   this.When(/^(.*) votes (\d+)$/, function(name, value, callback) {
-    lookupGuestBrowser(name).pressButton('[vote-value="' + value + '"]');
-    setTimeout(function () {
-      callback();
-    }, 300);
+    userVotes(name, value, callback);
   });
 
   this.defineStep(/^after (\d+) seconds$/, function(arg1, callback) {
@@ -113,22 +132,50 @@ module.exports = function () {
   });
 
   this.Given(/^(.*) joins the room$/, function(name, callback) {
-    visitCurrentRoom(name, function () {
-      joinRoomWithName(name);
-      acceptGuest(name, callback);
-    });
+    fullyJoinRoom(name, callback);
   });
 
   this.When(/^I request a vote for task "([^"]*)"$/, function(taskName, callback) {
-    world.hostBrowser.fill('#voteName', taskName).pressButton('#requestVote');
-    setTimeout(function () {
-      callback();
-    }, 300);
+    requestVoteOnTask(taskName, callback);
   });
 
   this.Then(/^(.*) should be requested to vote$/, function(name, callback) {
     var expected = 'Vote on ';
     assertEquals(lookupGuestBrowser(name).text('main h1').substr(0, expected.length), expected, callback);
+  });
+
+  this.Given(/^I create a room with (\d+) users$/, function(arg1, callback) {
+    createRoom('My Room', function () {
+      var callbackGenerator = new ChainedDeferred(callback);
+      while (arg1-- > 0) {
+        fullyJoinRoom('Guest ' + arg1, callbackGenerator.getInstance());
+      }
+      callbackGenerator.configComplete();
+    });
+  });
+
+  this.When(/^I request a vote$/, function(callback) {
+    requestVoteOnTask('A Task', callback);
+  });
+
+  this.When(/^(\d+) users vote (\d+)$/, function(arg1, arg2, callback) {
+    var i = 1;
+    var deferred = new ChainedDeferred(callback);
+    while (i <= arg1) {
+      userVotes("Guest " + i++, arg2, deferred.getInstance());
+    }
+    deferred.configComplete();
+  });
+
+  this.Then(/^all users should see vote progress as (.+)$/, function(arg1, callback) {
+    setTimeout(function () {
+      var expectedValue = 'Voting progress: ' + arg1;
+      assertEquals(world.hostBrowser.text('.voting-progress'), expectedValue, callback);
+      _.each(world.guestBrowsersByName, function (browser) {
+        assertEquals(browser.text('.voting-progress'), expectedValue, callback);
+      });
+      callback();
+    }, 1000);
   });
 
   function assertEquals(actualTitle, expectedTitle, callback) {
@@ -139,4 +186,19 @@ module.exports = function () {
     }
   }
 
+  function ChainedDeferred(callback) {
+    var that = this;
+    that.i = 1;
+    function callbackWrapper() {
+      that.i--;
+      if (that.i === 0) {
+        return callback.apply(null, arguments);
+      }
+    }
+    that.getInstance = function () {
+      that.i++;
+      return callbackWrapper;
+    };
+    that.configComplete = callbackWrapper;
+  }
 };

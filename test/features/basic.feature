@@ -57,3 +57,10 @@ Feature: Basic end-to-end integration tests
 		When Fred disconnects
 		Then I should see no participation requests
 
+	@smoke
+	Scenario: Vote Progress shown to users.
+		Given I create a room with 3 users
+		When I request a vote
+		And 2 users vote 3
+		Then all users should see vote progress as 66%
+

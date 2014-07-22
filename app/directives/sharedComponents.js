@@ -26,7 +26,7 @@ angular.module('pp')
       restrict: 'E',
       controller: function ($element, api) {
         var progress = document.createElement('progress');
-        var $title = $('<h2/>');
+        var $title = $('<h2/>').addClass('voting-progress');
         var $container = $('<div/>').append($title).append(progress);
         api.onVotingProgressUpdate(function (percent) {
           progress.value=percent/100;
@@ -40,7 +40,7 @@ angular.module('pp')
         $element.append($container);
 
         function updateTextTo(percent) {
-          $title.text('Voting progress: ' + percent + '%');
+          $title.text('Voting progress: ' + Math.floor(percent) + '%').addClass('voting-progress');
         }
       }
     };

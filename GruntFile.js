@@ -66,6 +66,14 @@ module.exports = function (grunt) {
             format: "pretty"
           }
         },
+        wip: {
+          src: 'test/features',
+          options: {
+            steps: "test/features/step_definitions",
+            tags: '@wip',
+            format: "pretty"
+          }
+        },
         smoke: {
           src: 'test/features',
           options: {
@@ -139,5 +147,5 @@ module.exports = function (grunt) {
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
   grunt.registerTask('dev', ['install-dependencies:dev', 'build', 'jasmine_node:server', 'jasmine:client', 'jshint', 'precompile', 'concurrent:dev']);
-}
-;
+  grunt.registerTask('bdd-wip', ['build', 'cucumberjs:wip']);
+};
