@@ -6,7 +6,6 @@ module.exports = function () {
 
   this.Given = this.Then = this.defineStep;
 
-
   function openBrowserWindow(location, fn) {
     var browser = new zombie();
     if (browser.installStubCanvas) {
@@ -40,7 +39,7 @@ module.exports = function () {
 
   function fullyJoinRoom(name, callback) {
     visitCurrentRoom(name, function () {
-      joinRoomWithName(name);
+      joinRoom(name);
       acceptGuest(name, callback);
     });
   }
@@ -52,7 +51,7 @@ module.exports = function () {
     }, 300);
   }
 
-  function joinRoomWithName(name) {
+  function joinRoom(name) {
     lookupGuestBrowser(name, true).fill('#name', name).pressButton('Join');
   }
 
@@ -65,9 +64,9 @@ module.exports = function () {
 
   function acceptGuest(name, callback) {
     setTimeout(function () {
-      world.hostBrowser.pressButton('button.accept[person-name="' + name + '"]');
+      world.hostBrowser.pressButton('#pending [person-name="' + name + '"] button.accept');
       callback();
-    }, 300);
+    }, 1000);
   }
 
   function lookupGuestBrowser(name) {
@@ -94,7 +93,7 @@ module.exports = function () {
   });
 
   this.When(/^(.*) requests access$/, function (name, callback) {
-    joinRoomWithName(name);
+    joinRoom.call(this, name);
     setTimeout(function () {
       callback();
     }, 1000);
@@ -124,7 +123,7 @@ module.exports = function () {
   this.Then(/^I should see participation request for (.*)/, function (expectedName, callback) {
     setTimeout(function () {
       assertEquals(world.hostBrowser.text('.pendingPeople .name'), expectedName, callback);
-    }, 300);
+    }.bind(this), 300);
   });
 
   this.Then(/^I should see no participation requests/, function (callback) {
@@ -134,7 +133,7 @@ module.exports = function () {
   this.Given(/^(.*) joins the room$/, function(name, callback) {
     fullyJoinRoom(name, function () {
       setTimeout(callback, 500);
-    });
+    }.bind(this));
   });
 
   this.When(/^I request a vote for task "([^"]*)"$/, function(taskName, callback) {
@@ -178,16 +177,8 @@ module.exports = function () {
         assertEquals(browser.text('.voting-progress'), expectedValue, callback);
       });
       callback();
-    }, 1000);
+    }.bind(this), 1000);
   });
-
-  function assertEquals(actualTitle, expectedTitle, callback) {
-    if (actualTitle === expectedTitle) {
-      callback();
-    } else {
-      callback.fail(new Error('expected ' + expectedTitle + ' but found ' + actualTitle));
-    }
-  }
 
   function ChainedDeferred(callback) {
     var that = this;
@@ -204,4 +195,21 @@ module.exports = function () {
     };
     that.configComplete = callbackWrapper;
   }
+
+  this.Then(/^(.*) should see icon "([^"]*)" for (.*) user "([^"]*)"$/, function(browserName, icon, list, name, callback) {
+    setTimeout(function () {
+      var browser = lookupGuestBrowser(browserName);
+      var selector = '#' + list + ' [person-name="' + name + '"] .icon-' + icon;
+      assertEquals(browser.queryAll(selector).length, 1, callback);
+    }.bind(this), 1000);
+  });
+
+  function assertEquals(actualTitle, expectedTitle, callback) {
+    if (actualTitle === expectedTitle) {
+      callback();
+    } else {
+      callback.fail(new Error('expected ' + expectedTitle + ' but found ' + actualTitle));
+    }
+  }
+
 };

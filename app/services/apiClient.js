@@ -38,9 +38,14 @@ angular.module('pp').service('api', [function () {
         fn(config);
       });
     },
-    joinRoom: function (ref, name) {
+    joinRoom: function (ref, name, icon, color) {
       roomRef = ref;
-      socket.emit('join-room', {ref: ref, name: name});
+      socket.emit('join-room', {
+        ref: ref,
+        name: name,
+        icon: icon,
+        color: color
+      });
       var output = {
         onApprove: function (fn) {
           socket.on('participant-approve', fn);

@@ -18,6 +18,8 @@ exports.create = function (host, name) {
     _.each(participants, function (participant) {
       part.push({
         name: participant.getName(),
+        icon: participant.getIcon(),
+        color: participant.getColor(),
         ref: participant.getRef()
       });
     });
@@ -61,7 +63,12 @@ exports.create = function (host, name) {
 
   function pushPendingParticipantsToHost() {
     var list = _.map(potentialParticipants, function (user) {
-      return {name: user.getName(), ref: user.getRef()};
+      return {
+        name: user.getName(),
+        ref: user.getRef(),
+        icon: user.getIcon(),
+        color: user.getColor()
+      };
     });
     host.participantRequest(list, room);
   }

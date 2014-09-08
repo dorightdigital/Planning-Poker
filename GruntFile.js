@@ -32,9 +32,7 @@ module.exports = function (grunt) {
       sass: {
         dist: {
           files: {
-            'build/style.css': [
-              'style/style.scss'
-            ]
+            'build/sass-style.css': 'style/style.scss'
           }
         }
       },
@@ -100,19 +98,27 @@ module.exports = function (grunt) {
         }
       },
       concat: {
-        client: {
+        js: {
           src: srcFiles,
           dest: 'build/app.js'
+        },
+        css: {
+          src: [
+            'bower_components/normalize.css/normalize.css',
+            'style/icomoon.css',
+            'build/sass-style.css'
+          ],
+          dest: 'build/style.css'
         }
       },
       watch: {
         css: {
           files: ['style/style.scss'],
-          tasks: ['sass']
+          tasks: ['sass', 'concat:css']
         },
         jsclient: {
           files: ['app/**/*.js'],
-          tasks: ['concat', 'jshint', 'jasmine:client', 'cucumberjs:all']
+          tasks: ['concat:js', 'jshint', 'jasmine:client']
         },
         jsclienttest: {
           files: ['test/client/**/*.js'],
@@ -120,11 +126,11 @@ module.exports = function (grunt) {
         },
         servertest: {
           files: ['server/**/*.js', 'test/server/**/*.spec.js'],
-          tasks: ['jasmine_node:server', 'cucumberjs:all']
+          tasks: ['jasmine_node:server']
         },
-        integrationtest: {
-          files: ['test/features/*.feature', 'test/features/**/*.js'],
-          tasks: ['cucumberjs:all']
+        'bdd-wip': {
+          files: ['server/**/*.js', 'app/**/*.js', 'test/features/**/*'],
+          tasks: ['cucumberjs:wip']
         }
       }
     }
@@ -147,5 +153,5 @@ module.exports = function (grunt) {
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);
   grunt.registerTask('dev', ['install-dependencies:dev', 'build', 'jasmine_node:server', 'jasmine:client', 'jshint', 'precompile', 'concurrent:dev']);
-  grunt.registerTask('bdd-wip', ['build', 'cucumberjs:wip']);
+  grunt.registerTask('bdd-wip', ['build', 'cucumberjs:wip', 'watch:bdd-wip']);
 };

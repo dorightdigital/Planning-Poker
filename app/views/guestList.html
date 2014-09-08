@@ -1,6 +1,6 @@
 <section ng-if="guests.length > 0">
   <h2>Active Participants</h2>
-  <ul ng-repeat="person in guests">
-    <li>{{person.name}} <button ng-if="host" ng-click="remove(person.ref)">Remove</button></li>
+  <ul ng-repeat="person in guests" id="active">
+    <li person-name="{{person.name}}"><span class="icon-{{person.icon}} avatar"></span>{{person.name}} <button ng-if="host" ng-click="remove(person.ref)">Remove</button></li>
   </ul>
 </section>

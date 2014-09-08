@@ -8,8 +8,10 @@ angular.module('pp')
       transclude: true,
       link: function ($scope, element) {
         function update() {
-          element.text('');
-          jQuery(element[0]).qrcode($scope.url);
+          if (document.createElement('canvas').getContext) {
+            element.text('');
+            jQuery(element[0]).qrcode($scope.url);
+          }
         }
 
         update();

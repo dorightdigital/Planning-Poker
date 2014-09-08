@@ -1,11 +1,12 @@
 <aside class="sidebar" ng-if="roomReady">
   <section ng-if="pendingPeople.length > 0" class="pendingPeople">
     <h2>Pending Participants</h2>
-    <ul ng-repeat="person in pendingPeople">
-      <li>
+    <ul ng-repeat="person in pendingPeople" id="pending">
+      <li person-name="{{person.name}}">
+        <span class="icon-{{person.icon}}-line avatar"></span>
         <span class="name">{{person.name}}</span>
-        <button ng-click="accept(person.ref)" class="accept" person-name="{{person.name}}">Accept</button>
-        <button ng-click="reject(person.ref)" class="reject" person-name="{{person.name}}">Reject</button>
+        <button ng-click="accept(person.ref)" class="accept">Accept</button>
+        <button ng-click="reject(person.ref)" class="reject">Reject</button>
       </li>
     </ul>
   </section>

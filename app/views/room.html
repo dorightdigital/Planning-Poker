@@ -41,9 +41,17 @@
   </div>
   <div ng-switch-default>
     <h1>Join room {{roomName}}</h1>
-    <form name="join" ng-submit="joinRoom(join.name)">
+    <form name="join" ng-submit="joinRoom(join.name, currentIcon)">
       <input id="name" ng-model="join.name" placeholder="Your name" required/>
       <input type="submit" value="Join"/>
+      <div class="iconpicker">
+        <span ng-click="togglePicker()" class="current icon-{{currentIcon}}"></span>
+        <div class="picker" ng-if="iconPickerDisplayed">
+          <ul class="icons">
+            <li ng-repeat="icon in icons" class="icon-{{icon}}" ng-click="iconPickerDisplayed = false;setIcon(icon);"></li>
+          </ul>
+        </div>
+      </div>
     </form>
   </div>
 </div>

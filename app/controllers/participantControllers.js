@@ -10,10 +10,25 @@ angular.module('pp').controller('roomParticipate', function ($scope, api, tracke
     $('[ng-app]').removeClass('loading');
   });
 
-  $scope.joinRoom = function (name) {
+
+  $scope.icons = ('smiley happy tongue wink grin cool ' +
+    'angry evil shocked confused neutral wondering').split(' ');
+  $scope.currentIcon = $scope.icons[0];
+  $scope.iconPickerDisplayed = false;
+  $scope.setIcon = function (icon) {
+    $scope.currentIcon = icon;
+    console.log('Hiding', $scope.iconPickerDisplayed);
+    $scope.iconPickerDisplayed = false;
+    tracker.trackEvent('set-icon', icon);
+  };
+  $scope.togglePicker = function () {
+    $scope.iconPickerDisplayed = !$scope.iconPickerDisplayed;
+  }
+
+  $scope.joinRoom = function (name, icon) {
     tracker.trackEvent('join-room', name);
     setState('pending');
-    api.joinRoom($scope.roomRef, name)
+    api.joinRoom($scope.roomRef, name, icon)
       .onApprove(function () {
         setState('in-room');
         $scope.$apply();

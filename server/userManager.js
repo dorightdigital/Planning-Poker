@@ -6,6 +6,8 @@ var guid = require('guid');
 function createUser(socket) {
   var ref = guid.raw();
   var name;
+  var icon;
+  var color;
   var currentRoomRef;
   var user = {
     getRef: function () {
@@ -14,8 +16,20 @@ function createUser(socket) {
     getName: function () {
       return name;
     },
+    getIcon: function () {
+      return icon;
+    },
+    getColor: function () {
+      return color;
+    },
     setName: function (newName) {
       name = newName;
+    },
+    setIcon: function (newIcon) {
+      icon = newIcon;
+    },
+    setColor: function (newColor) {
+      color = newColor;
     },
     participantRequest: function (participants, room) {
       socket.emit('participant-request', {

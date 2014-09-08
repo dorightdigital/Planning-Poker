@@ -28,6 +28,8 @@ exports.init = function (server) {
 
     socket.on('join-room', function (config) {
       user.setName(config.name);
+      user.setIcon(config.icon);
+      user.setColor(config.color);
       withSpecifiedRoom(config.ref, function (room) {
         room.actions.participantRequest(user);
       });
