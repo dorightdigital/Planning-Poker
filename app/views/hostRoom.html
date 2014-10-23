@@ -29,6 +29,11 @@
   </form>
 
   <h1 ng-if="roomReady">Hosting room {{roomName}}</h1>
+  <p ng-if="!allowVote && roomReady">
+    Next Step: invite others to join using the link or QR code provided.
+    When someone requests to join the room you'll be alerted, accept them and you'll be
+    ready to start planning.
+  </p>
   <section ng-if="allowVote">
     <form name="newVote" ng-submit="requestVote(newVote.name)" ng-controller="requestVote">
       <h1>Request a vote</h1>
