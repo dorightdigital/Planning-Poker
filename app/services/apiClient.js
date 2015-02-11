@@ -82,16 +82,17 @@ angular.module('pp').service('api', [function () {
         roomRef: roomRef
       });
     },
-    requestVotes: function (name) {
+    requestVotes: function (name, choices) {
       socket.emit('request-voting-round', {
         name: name,
-        roomRef: roomRef
+        roomRef: roomRef,
+        choices: choices
       });
     },
     onVotingRequest: function (fn) {
       socket.on('vote-required', function (config) {
         if (config.roomRef === roomRef) {
-          fn(config.taskName, config.taskRef);
+          fn(config.taskName, config.taskRef, config.choices);
         }
       });
     },

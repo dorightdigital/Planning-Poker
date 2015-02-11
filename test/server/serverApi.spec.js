@@ -114,10 +114,10 @@ describe('Server API', function () {
         expect(user.sendError).toHaveBeenCalledWith('User not found "not-findable"');
       });
     });
-    it('should allow user to request voting', function () {
+    it('should allow host to request voting', function () {
       spyOn(room.actions, 'newVotingRound');
-      fireEvent('request-voting-round', {name: 'abc', roomRef: room.info.ref});
-      expect(room.actions.newVotingRound).toHaveBeenCalledWith('abc', user);
+      fireEvent('request-voting-round', {name: 'abc', roomRef: room.info.ref, choices: [3]});
+      expect(room.actions.newVotingRound).toHaveBeenCalledWith('abc', user, [3]);
     });
     it('should pass on error when no room found when initiating a voting round', function () {
       spyOn(user, 'sendError');

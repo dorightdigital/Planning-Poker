@@ -6,8 +6,8 @@ describe('Room Creator', function () {
 
   it('should track request to vote', function () {
     var controller = help.loadController('requestVote');
-    controller.$scope.requestVote('abc');
-    expect(controller.tracker.trackEvent).toHaveBeenCalledWith('request-vote', 'abc');
+    controller.$scope.requestVote('abc', 'a,b,c');
+    expect(controller.tracker.trackEvent).toHaveBeenCalledWith('request-vote', 'abc', 'a,b,c');
   });
 
 });

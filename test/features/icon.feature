@@ -1,4 +1,3 @@
-@wip
 Feature: User Icons
 	A chance for users to put a personal touch on their Planning Poker persona.
 

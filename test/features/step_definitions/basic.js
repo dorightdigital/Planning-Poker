@@ -30,7 +30,7 @@ module.exports = function () {
   }
 
   function visitCurrentRoom(name, callback) {
-    world.guestBrowsersByName = world.guestBrowsersByName || [];
+    world.guestBrowsersByName = world.guestBrowsersByName || {};
     openBrowserWindow(world.joinUrl, function (browser) {
       world.guestBrowsersByName[name] = browser;
       callback();
@@ -59,7 +59,7 @@ module.exports = function () {
     lookupGuestBrowser(name).pressButton('[vote-value="' + value + '"]');
     setTimeout(function () {
       callback();
-    }, 300);
+    }, 1000);
   }
 
   function acceptGuest(name, callback) {
@@ -78,6 +78,10 @@ module.exports = function () {
       throw 'No browser for name ' + name + '.  Browsers are ' + _.keys(world.guestBrowsersByName).join(', ');
     }
     return browser;
+  }
+
+  function eachGuestBrowser(callback) {
+    _.each(world.guestBrowsersByName, callback);
   }
 
   this.Given(/^I create room "([^"]*)"$/, function (name, callback) {
@@ -169,6 +173,13 @@ module.exports = function () {
     deferred.configComplete();
   });
 
+  this.When(/^I set the card deck to (.*)$/, function(cardList, callback) {
+    world.hostBrowser.pressButton('.advanced-conf',function () {
+      world.hostBrowser.fill('cardValues', cardList);
+      callback();
+    });
+  });
+
   this.Then(/^all users should see vote progress as (.+)$/, function(arg1, callback) {
     setTimeout(function () {
       var expectedValue = 'Voting progress: ' + arg1;
@@ -204,11 +215,34 @@ module.exports = function () {
     }.bind(this), 1000);
   });
 
-  function assertEquals(actualTitle, expectedTitle, callback) {
-    if (actualTitle === expectedTitle) {
+  this.Then(/^All users should see cards (.*)$/, function(cardList, callback) {
+    var cards = cardList.split(',');
+    var success = true;
+    var output = '';
+    eachGuestBrowser(function (browser){
+      _.each(cards, function (value, key) {
+        var text = browser.text('button[position="' + key + '"]');
+        if (text !== value) {
+          if (output.length > 0) {
+            output += '\n';
+          }
+          output += 'expected position ' + (key+1) + ' to be ' + cards[key] + ' but was ' + text;
+          success = false;
+        }
+      });
+    });
+    if (success) {
       callback();
     } else {
-      callback.fail(new Error('expected ' + expectedTitle + ' but found ' + actualTitle));
+      callback.fail(output);
+    }
+  });
+
+  function assertEquals(actual, expected, callback) {
+    if (actual === expected) {
+      callback();
+    } else {
+      callback.fail(new Error('expected ' + expected + ' but found ' + actual));
     }
   }
 

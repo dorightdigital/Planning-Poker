@@ -55,7 +55,7 @@ exports.init = function (server) {
     });
     socket.on('request-voting-round', function (config) {
       withSpecifiedRoom(config.roomRef, function (room) {
-        room.actions.newVotingRound(config.name, user);
+        room.actions.newVotingRound(config.name, user, config.choices);
       });
     });
     socket.on('vote', function (config) {

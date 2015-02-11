@@ -35,10 +35,14 @@
     ready to start planning.
   </p>
   <section ng-if="allowVote">
-    <form name="newVote" ng-submit="requestVote(newVote.name)" ng-controller="requestVote">
+    <form name="newVote" ng-submit="requestVote(newVote.name, cardValues)" ng-controller="requestVote">
       <h1>Request a vote</h1>
       <input ng-model="newVote.name" id="voteName" placeholder="Task name" required/>
-      <input type="submit" id="requestVote" value="Request"/>
+      <input type="submit" id="requestVote" value="Request Vote"/>
+      <input type="button" class="advanced-conf" value="Configure" ng-click="advancedConfig = !advancedConfig"/>
+      <div ng-show="advancedConfig">
+        <p>Card Values: <input type="text" ng-model="cardValues" name="cardValues"/></p>
+      </div>
       <div ng-switch="result">
         <div ng-switch-when="unan">
           <h1 class="vote-summary">Everyone voted {{resultValue}}</h1>

@@ -189,16 +189,17 @@ describe('Room Manager', function () {
       it('should inform guests when host stats voting round', function () {
         spyOn(guest, 'voteRequired');
         spyOn(guest2, 'voteRequired');
-        room.actions.newVotingRound('abc', host);
-        expect(guest.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc');
-        expect(guest2.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc');
+        room.actions.newVotingRound('abc', host, [1,2,3]);
+        expect(guest.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc', [1,2,3]);
+        expect(guest2.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc', [1,2,3]);
       });
       it('should inform late-entry guests mid-voting round', function () {
         var guest = help.generateUser();
         spyOn(guest, 'voteRequired');
-        room.actions.newVotingRound('abc', host);
+        var choices = ['a', 'b'];
+        room.actions.newVotingRound('abc', host, choices);
         requestAndAcceptGuest(guest, 'ghi');
-        expect(guest.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc');
+        expect(guest.voteRequired).toHaveBeenCalledWith(room.info.ref, 'known-guid', 'abc', choices);
       });
       it('should reject non-host stating voting round', function () {
         spyOn(guest2, 'voteRequired');
@@ -326,7 +327,7 @@ describe('Room Manager', function () {
             userVotes(user, 3);
           });
           _.each(allUsers, function (user) {
-            expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 3);
+            expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', '3');
           });
         });
         it('should show send correct answer when everyone agrees', function () {
@@ -334,7 +335,7 @@ describe('Room Manager', function () {
             userVotes(user, 5);
           });
           _.each(allUsers, function (user) {
-            expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', 5);
+            expect(user.result).toHaveBeenCalledWith('vote-ref', 'agreed', '5');
           });
         });
         it('should not publish result until all users have voted', function () {

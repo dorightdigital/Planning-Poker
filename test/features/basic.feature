@@ -68,7 +68,7 @@ Feature: Basic end-to-end integration tests
 		When Fred disconnects
 		Then I should see no participation requests
 
-	@smoke
+	@smoke @wip
 	Scenario: Vote Progress shown to users.
 		Given I create a room with 3 users
 		When I request a vote

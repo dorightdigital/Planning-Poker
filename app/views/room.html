@@ -34,8 +34,8 @@
   <div ng-switch-when="voting">
     <h1>Vote on {{taskName}}</h1>
 
-    <span ng-if="!voted" ng-repeat="value in [1,2,3,5,8,13,21]">
-      <button ng-click="voteFor(value)" vote-value="{{value}}">{{value}}</button>
+    <span ng-if="!voted" ng-repeat="value in availableVoteValues">
+      <button ng-click="voteFor(value)" position="{{$index}}" vote-value="{{value}}">{{value}}</button>
     </span>
     <voteprogress/>
   </div>

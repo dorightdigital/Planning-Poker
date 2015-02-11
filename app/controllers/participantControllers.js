@@ -47,9 +47,10 @@ angular.module('pp').controller('roomParticipate', function ($scope, api, tracke
     api.vote(value, currentVote, $scope.roomRef);
     $scope.voted = true;
   };
-  api.onVotingRequest(function (taskName, taskRef) {
+  api.onVotingRequest(function (taskName, taskRef, values) {
     $scope.taskName = taskName;
     $scope.voted = false;
+    $scope.availableVoteValues = values;
     currentVote = taskRef;
     setState('voting');
     $scope.$apply();

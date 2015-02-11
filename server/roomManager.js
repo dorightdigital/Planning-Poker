@@ -42,7 +42,7 @@ exports.create = function (host, name) {
       if (numOfDifferentAnswers > 1) {
         params = [voteRef, 'varied', votingStatus.answers];
       } else {
-        params = [voteRef, 'agreed', parseInt(lastAnswer, 10)];
+        params = [voteRef, 'agreed', lastAnswer];
       }
       host.result.apply(host, params);
       _.each(participants, function (user) {
@@ -57,8 +57,8 @@ exports.create = function (host, name) {
       host.votingProgress(voteRef, votingStatus.voted.length / (votingStatus.voted.length + votingStatus.pending.length));
     }
   }
-  function requireVoteFromParticipant(user) {
-    user.voteRequired(ref, votingStatus.ref, votingStatus.name);
+  function requireVoteFromParticipant(user, choices) {
+    user.voteRequired(ref, votingStatus.ref, votingStatus.name, choices);
   }
 
   function pushPendingParticipantsToHost() {
@@ -91,7 +91,7 @@ exports.create = function (host, name) {
           potentialParticipants = _.without(potentialParticipants, user);
           pushPendingParticipantsToHost();
           if (votingStatus) {
-            requireVoteFromParticipant(user);
+            requireVoteFromParticipant(user, votingStatus.choices);
             votingStatus.pending.push(user.getName());
             sendVotingStatusUpdate();
           }
@@ -108,7 +108,7 @@ exports.create = function (host, name) {
           acceptor.sendError('You can\'t reject users unless you\'re the host.');
         }
       },
-      newVotingRound: function (name, user) {
+      newVotingRound: function (name, user, choices) {
         if (user !== host) {
           user.sendError('You can\'t start voting rounds unless you\'re the host.');
           return;
@@ -118,10 +118,11 @@ exports.create = function (host, name) {
           voted: [],
           answers: {},
           ref: guid.raw(),
-          name: name
+          name: name,
+          choices: choices
         };
         _.each(participants, function (participant) {
-          requireVoteFromParticipant(participant);
+          requireVoteFromParticipant(participant, choices);
           votingStatus.pending.push(participant.getName());
         });
         sendVotingStatusUpdate();

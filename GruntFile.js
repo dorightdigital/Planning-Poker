@@ -72,6 +72,14 @@ module.exports = function (grunt) {
             format: "pretty"
           }
         },
+        finished: {
+          src: 'test/features',
+          options: {
+            steps: "test/features/step_definitions",
+            tags: '~@wip',
+            format: "pretty"
+          }
+        },
         smoke: {
           src: 'test/features',
           options: {
@@ -148,7 +156,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-cucumber');
 
   grunt.registerTask('precompile', ['sass', 'concat']);
-  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint', 'cucumberjs:all']);
+  grunt.registerTask('test', ['jasmine_node:server', 'jasmine:client', 'jshint', 'cucumberjs:finished']);
   grunt.registerTask('build', ['install-dependencies:prod', 'precompile']);
   grunt.registerTask('host-dev', ['nodemon:dev']);
   grunt.registerTask('host-live', ['nodemon:live']);

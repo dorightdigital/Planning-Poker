@@ -16,6 +16,7 @@ angular.module('pp')
         $scope.joinUrl = window.location.protocol + '//' + window.location.hostname + portString + '/participate/' + room.ref;
         $scope.roomName = roomName;
         $scope.roomReady = true;
+        $scope.cardValues = '1,2,3,5,8,13,21';
         $scope.$apply();
       });
     };
@@ -42,11 +43,11 @@ angular.module('pp')
       api.rejectParticipant(ref);
     };
   }).controller('requestVote', function ($scope, api, tracker) {
-    $scope.requestVote = function (voteName) {
-      tracker.trackEvent('request-vote', voteName)
+    $scope.requestVote = function (voteName, cardValues) {
+      tracker.trackEvent('request-vote', voteName, cardValues);
       $scope.voteInProgress = true;
       $scope.result = 'pending';
-      api.requestVotes(voteName);
+      api.requestVotes(voteName, cardValues.split(','));
     };
     api.onUnanimousResult(function (value) {
       $scope.voteInProgress = false;

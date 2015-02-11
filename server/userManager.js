@@ -69,11 +69,12 @@ function createUser(socket) {
     roomClosed: function (room) {
       socket.emit('room-closed', {roomRef: 'ref'});
     },
-    voteRequired: function (roomRef, taskRef, taskName) {
+    voteRequired: function (roomRef, taskRef, taskName, choices) {
       socket.emit('vote-required', {
         roomRef: roomRef,
         taskRef: taskRef,
-        taskName: taskName
+        taskName: taskName,
+        choices: choices
       });
     },
     fullVotingStatus: function (voteRef, pending, voted) {
